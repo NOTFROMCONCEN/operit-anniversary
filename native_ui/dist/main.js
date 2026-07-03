@@ -7,11 +7,8 @@
 // ============================================================
 // _G_S::anniv::orig::2 — 来源水印哨兵
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-
-var anniversaryManagerScreen = __importDefault(require("./ui/anniversary_manager/index.ui.js")).default;
+var anniversaryManagerModule = require("./ui/anniversary_manager/index.ui.js");
+var anniversaryManagerScreen = anniversaryManagerModule.default || anniversaryManagerModule;
 var service = require("./shared/anniversary_service.js");
 var storage = require("./shared/anniversary_storage.js");
 
@@ -26,7 +23,8 @@ var systemPromptHook = service.systemPromptHook;
 
 function registerToolPkg() {
     // 确保存储目录与数据文件存在
-    void storage.ensureDataFile();
+    void storage.ensureDataFile().catch(function () { });
+    var navigationIcon = (typeof Icons !== "undefined" && Icons.Calendar) ? Icons.Calendar : "calendar";
 
     // 注册 UI 路由：compose_dsl 运行时
     ToolPkg.registerUiRoute({
@@ -50,7 +48,7 @@ function registerToolPkg() {
             zh: "纪念日管理",
             en: "Anniversary Manager"
         },
-        icon: Icons.Calendar,
+        icon: navigationIcon,
         order: 220
     });
 

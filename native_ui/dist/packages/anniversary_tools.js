@@ -272,4 +272,4 @@ exports.get_context_anniversaries = function (params) { return wrap(getContextAn
 exports.delete_anniversary = function (params) { return wrap(deleteAnniversaryTool, params); };
 
 // 确保存储初始化
-void storage.ensureDataFile();
+void storage.ensureDataFile().catch(function () { });

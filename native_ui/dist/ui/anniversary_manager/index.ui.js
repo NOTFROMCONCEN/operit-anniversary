@@ -171,32 +171,46 @@ function Screen(ctx) {
     var colors = ctx.MaterialTheme.colorScheme;
     var UI = ctx.UI;
 
+    function useCompatState(name, initialValue) {
+        var raw = ctx.useState(name, initialValue);
+        if (Array.isArray(raw)) {
+            return {
+                get value() { return raw[0]; },
+                set: function (value) { return raw[1](value); }
+            };
+        }
+        return {
+            get value() { return raw.value; },
+            set: function (value) { return raw.set(value); }
+        };
+    }
+
     // 状态管理
-    var entries = ctx.useState("entries", []);
-    var loading = ctx.useState("loading", false);
-    var hasLoadedOnce = ctx.useState("hasLoadedOnce", false);
-    var initialLoadInFlight = ctx.useState("initialLoadInFlight", false);
-    var view = ctx.useState("view", "list"); // list | create | edit
-    var editId = ctx.useState("editId", "");
-    var deletingEntryId = ctx.useState("deletingEntryId", "");
-    var togglingEntryId = ctx.useState("togglingEntryId", "");
-    var showDeleteConfirm = ctx.useState("showDeleteConfirm", false);
-    var pendingDeleteId = ctx.useState("pendingDeleteId", "");
-    var pendingDeleteTitle = ctx.useState("pendingDeleteTitle", "");
+    var entries = useCompatState("entries", []);
+    var loading = useCompatState("loading", false);
+    var hasLoadedOnce = useCompatState("hasLoadedOnce", false);
+    var initialLoadInFlight = useCompatState("initialLoadInFlight", false);
+    var view = useCompatState("view", "list"); // list | create | edit
+    var editId = useCompatState("editId", "");
+    var deletingEntryId = useCompatState("deletingEntryId", "");
+    var togglingEntryId = useCompatState("togglingEntryId", "");
+    var showDeleteConfirm = useCompatState("showDeleteConfirm", false);
+    var pendingDeleteId = useCompatState("pendingDeleteId", "");
+    var pendingDeleteTitle = useCompatState("pendingDeleteTitle", "");
 
     // 表单状态
-    var formTitle = ctx.useState("formTitle", "");
-    var formDate = ctx.useState("formDate", "");
-    var formDescription = ctx.useState("formDescription", "");
-    var formOwner = ctx.useState("formOwner", "user");
-    var formMode = ctx.useState("formMode", "both");
-    var formSendToContext = ctx.useState("formSendToContext", false);
+    var formTitle = useCompatState("formTitle", "");
+    var formDate = useCompatState("formDate", "");
+    var formDescription = useCompatState("formDescription", "");
+    var formOwner = useCompatState("formOwner", "user");
+    var formMode = useCompatState("formMode", "both");
+    var formSendToContext = useCompatState("formSendToContext", false);
 
     // ============================================================
     // 数据加载
     // ============================================================
     async function loadEntries(force) {
-        if (loading || (hasLoadedOnce && !force)) {
+        if (loading.value || (hasLoadedOnce.value && !force)) {
             return;
         }
         loading.set(true);
@@ -535,7 +549,7 @@ function Screen(ctx) {
                                 ),
                                 UI.Switch({
                                     checked: entry.sendToContext,
-                                    onCheckedChange: function (_checked) { doToggleContext(entry.id, entry.sendToContext); },
+                                    onCheckedChange: function (_checked) { return doToggleContext(entry.id, entry.sendToContext); },
                                     enabled: !isEntryBusy,
                                     checkedThumbColor: colors.primary,
                                     checkedTrackColor: colors.primaryContainer,
@@ -597,7 +611,7 @@ function Screen(ctx) {
                             [
                                 UI.OutlinedButton(
                                     {
-                                        onClick: function () { doEdit(entry.id); },
+                                        onClick: function () { return doEdit(entry.id); },
                                         enabled: !isEntryBusy,
                                         weight: 1,
                                         height: 32,
@@ -732,7 +746,7 @@ function Screen(ctx) {
                 // 保存按钮
                 UI.Button({
                     text: isEdit ? t.buttonSave : t.buttonCreate,
-                    onClick: function () { doSave(); },
+                    onClick: function () { return doSave(); },
                     fillMaxWidth: true,
                     shape: { cornerRadius: 14 }
                 })
