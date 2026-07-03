@@ -1,0 +1,37 @@
+{
+    "schema_version": 1,
+    "toolpkg_id": "com.operit.anniversary",
+    "version": "1.0.0",
+    "main": "dist/main.js",
+    "license": "MIT",
+    "author": [
+        "AnniversaryPluginContributors"
+    ],
+    "copyright": "Copyright (c) 2026 AnniversaryPluginContributors. Licensed under MIT. See LICENSE file. Removing author attribution violates the MIT license.",
+    "display_name": {
+        "zh": "纪念日",
+        "en": "Anniversary",
+        "default": "Anniversary"
+    },
+    "description": {
+        "zh": "保存用户与 AI 之间的重要纪念日，提供日期计算、查询、删除、上下文发送开关等能力。内置原生管理界面，支持图形化增删改查。本地 JSON 存储，公历日期计算，支持闰年 2 月 29 日。",
+        "en": "Save important anniversaries between user and AI. Provides date calculation, query, delete, and context-send toggle. Built-in native management UI for graphical CRUD. Local JSON storage, solar date calculation, supports leap day Feb 29.",
+        "default": "Anniversary plugin with native UI, date calculation and context injection."
+    },
+    "enabled_by_default": false,
+    "subpackages": [
+        {
+            "id": "anniversary_tools",
+            "entry": "dist/packages/anniversary_tools.js",
+            "enabled_by_default": false,
+            "display_name": {
+                "zh": "纪念日工具",
+                "en": "Anniversary Tools"
+            },
+            "description": {
+                "zh": "纪念日的增删查改与状态计算工具，供 AI 在对话中调用。",
+                "en": "CRUD and status calculation tools for anniversaries, callable by AI in conversation."
+            }
+        }
+    ]
+}

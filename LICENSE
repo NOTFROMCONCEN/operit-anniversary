@@ -1,0 +1,53 @@
+MIT License
+
+Copyright (c) 2026 Anniversary Plugin Contributors
+
+本项目（纪念日插件 / Anniversary Plugin，包含单文件基础版
+AnniversaryPlugin.js 与原生 UI 增强版 native_ui/）及其全部源代码、
+文档、测试用例，均依据 MIT 开源协议授权。
+
+================================================================
+                    防 剽 窃 声 明（重要）
+================================================================
+
+本项目的作者署名、版权声明、水印标记、完整性校验模块以及散布于
+源代码各处的作者指纹，是本项目不可分割的组成部分。
+
+依据 MIT 协议条款，任何使用、复制、修改、分发本项目的个人或组织，
+**必须** 保留原始版权声明与许可声明。
+
+以下行为构成对 MIT 协议的违反，并可能同时构成侵权：
+
+  1. 删除、篡改、掩盖本文件（LICENSE）或任何源文件中的版权头、
+     作者署名、水印标记；
+  2. 移除或绕过源代码中的完整性校验逻辑（_guard 模块）后声称
+     该作品为本人原创；
+  3. 对本项目进行「洗代码」（变量重命名、格式重排、注释删除）后
+     声称为独立创作。
+
+本项目在源代码中植入了多层作者指纹（功能性水印常量、数据级指纹、
+散布式署名、运行时完整性校验）。这些指纹用于在发生上述侵权行为
+时提供取证证据。即使侵权者删除了可见的版权头，残留的功能性指纹
+仍可作为原创归属的技术证据。
+
+若您发现有人违反上述条款，请保留证据并依据本 LICENSE 主张权利。
+
+================================================================
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
