@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>纪念日管理</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233b7c82'/%3E%3Cpath d='M20 18h24a4 4 0 0 1 4 4v24a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V22a4 4 0 0 1 4-4Z' fill='%23fff'/%3E%3Cpath d='M22 28h20M22 36h12' stroke='%233b7c82' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef6f8;
+      --panel: rgba(255, 255, 255, .82);
+      --panel-strong: rgba(255, 255, 255, .94);
+      --ink: #26313f;
+      --muted: #6f7b8d;
+      --line: rgba(103, 123, 143, .2);
+      --accent: #3b7c82;
+      --accent-soft: #d8eef0;
+      --warn: #a85658;
+      --warn-soft: #f6dddc;
+      --shadow: 0 18px 44px rgba(65, 91, 117, .14);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      min-height: 100%;
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(255,255,255,.88), transparent 28%),
+        radial-gradient(circle at 88% 4%, rgba(217,235,238,.9), transparent 24%),
+        linear-gradient(135deg, #edf7f8 0%, #f8fbfb 46%, #e5f0f3 100%);
+      color: var(--ink);
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(1120px, 100%);
+      min-height: 100svh;
+      margin: 0 auto;
+      padding: 28px 20px 42px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: clamp(28px, 6vw, 48px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-radius: 8px;
+      background: var(--panel-strong);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 18px rgba(57, 80, 105, .08);
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .btn.danger {
+      background: var(--warn-soft);
+      color: var(--warn);
+      border-color: rgba(168, 86, 88, .2);
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.62);
+      border: 1px solid rgba(255,255,255,.78);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.88);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status-strip strong {
+      color: var(--ink);
+      font-weight: 650;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+      background: #9aa7b5;
+    }
+
+    .dot.live { background: #2f9d72; }
+    .dot.mock { background: #c1872f; }
+    .dot.error { background: #b45151; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .search {
+      min-height: 44px;
+      width: 100%;
+      padding: 0 14px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      color: var(--ink);
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .card,
+    .form-panel,
+    .empty,
+    .toast {
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.82);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.86);
+      backdrop-filter: blur(16px);
+    }
+
+    .card {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .card-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .date {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .switch {
+      min-width: 54px;
+      height: 30px;
+      padding: 3px;
+      border-radius: 999px;
+      background: #d5dde4;
+      border: 1px solid rgba(76, 92, 110, .12);
+      transition: background .18s ease;
+    }
+
+    .switch span {
+      display: block;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(31, 42, 56, .18);
+      transition: transform .18s ease;
+    }
+
+    .switch.on {
+      background: var(--accent);
+    }
+
+    .switch.on span {
+      transform: translateX(24px);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.62);
+      border: 1px solid var(--line);
+    }
+
+    .stat small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .stat strong {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      min-height: 26px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #245d63;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .tag.muted {
+      color: var(--muted);
+      background: rgba(255,255,255,.68);
+      border: 1px solid var(--line);
+    }
+
+    .description {
+      min-height: 22px;
+      color: var(--muted);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .card-actions .btn {
+      flex: 1;
+    }
+
+    .empty {
+      padding: 34px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .empty h2 {
+      margin: 0 0 8px;
+      color: var(--ink);
+    }
+
+    .form-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      place-items: center;
+      padding: 22px;
+      background: rgba(34, 48, 64, .2);
+      backdrop-filter: blur(10px);
+    }
+
+    .form-wrap.open {
+      display: grid;
+    }
+
+    .form-panel {
+      width: min(640px, 100%);
+      max-height: min(760px, calc(100svh - 44px));
+      overflow: auto;
+      padding: 20px;
+      background: var(--panel-strong);
+    }
+
+    .form-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .form-head h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .fields {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .field textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.7);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 40;
+      transform: translateX(-50%) translateY(16px);
+      width: min(520px, calc(100% - 32px));
+      padding: 12px 14px;
+      color: var(--ink);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 720px) {
+      .app { padding-inline: 14px; }
+      .topbar,
+      .filters,
+      .status-strip {
+        grid-template-columns: 1fr;
+      }
+      .toolbar { justify-content: stretch; }
+      .toolbar .btn,
+      .filters .btn { width: 100%; }
+      .field-row,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="title">
+        <h1>纪念日管理</h1>
+        <p>统一管理本地纪念日数据，页面会跟随插件数据变化自动刷新。</p>
+      </div>
+      <div class="toolbar">
+        <button class="btn" id="refreshBtn" type="button" title="刷新">↻ 刷新</button>
+        <button class="btn primary" id="createBtn" type="button" title="添加纪念日">＋ 添加</button>
+      </div>
+    </header>
+
+    <section class="status-strip" aria-live="polite">
+      <div><span class="dot" id="bridgeDot"></span><strong id="bridgeMode">初始化中</strong> · <span id="syncText">等待数据</span></div>
+      <div id="todayText"></div>
+    </section>
+
+    <section class="filters">
+      <input class="search" id="searchInput" type="search" placeholder="搜索名称、日期、备注" autocomplete="off" />
+      <button class="btn" id="clearSearchBtn" type="button">清空</button>
+    </section>
+
+    <section class="grid" id="cards"></section>
+  </main>
+
+  <section class="form-wrap" id="formWrap" aria-hidden="true">
+    <form class="form-panel" id="entryForm">
+      <div class="form-head">
+        <h2 id="formTitle">添加纪念日</h2>
+        <button class="btn" id="closeFormBtn" type="button" title="关闭">×</button>
+      </div>
+      <div class="fields">
+        <input id="entryId" type="hidden" />
+        <div class="field">
+          <label for="titleInput">名称</label>
+          <input id="titleInput" name="title" required maxlength="80" placeholder="例如：初次见面" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="dateInput">日期</label>
+            <input id="dateInput" name="date" required placeholder="YYYY-MM-DD" inputmode="numeric" />
+          </div>
+          <div class="field">
+            <label for="ownerInput">归属</label>
+            <select id="ownerInput" name="owner">
+              <option value="user">用户</option>
+              <option value="assistant">AI</option>
+              <option value="shared">共同</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="modeInput">计数模式</label>
+          <select id="modeInput" name="mode">
+            <option value="both">双向</option>
+            <option value="count_up">已过天数</option>
+            <option value="count_down">倒计天数</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="descriptionInput">备注</label>
+          <textarea id="descriptionInput" name="description" maxlength="600" placeholder="可选"></textarea>
+        </div>
+        <div class="check-row">
+          <div>
+            <strong>发送给 AI 上下文</strong>
+            <div class="date">开启后，AI 对话会看到这个纪念日的实时状态。</div>
+          </div>
+          <input id="sendInput" name="sendToContext" type="checkbox" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn" id="cancelBtn" type="button">取消</button>
+        <button class="btn primary" id="saveBtn" type="submit">保存</button>
+      </div>
+    </form>
+  </section>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const POLL_MS = 2000;
+    const STORE_KEY = "anniversary-webui-mock-data";
+
+    const state = {
+      snapshot: { success: true, today: "", version: "", count: 0, items: [] },
+      query: "",
+      editingVersion: "",
+      pollTimer: 0,
+      bridgeMode: "mock",
+      busy: false
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+
+    function pad2(n) {
+      return n < 10 ? "0" + n : String(n);
+    }
+
+    function todayYMD() {
+      const now = new Date();
+      return `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+    }
+
+    function isLeapYear(y) {
+      return (y % 4 === 0 && y % 100 !== 0) || (y % 400 === 0);
+    }
+
+    function parseYMD(date) {
+      const parts = String(date || "").split("-");
+      return { y: Number(parts[0]), m: Number(parts[1]), d: Number(parts[2]) };
+    }
+
+    function isValidYMD(date) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(String(date || ""))) return false;
+      const p = parseYMD(date);
+      if (!p.y || p.m < 1 || p.m > 12) return false;
+      const days = [31, isLeapYear(p.y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      return p.d >= 1 && p.d <= days[p.m - 1];
+    }
+
+    function toDate(date) {
+      const p = parseYMD(date);
+      return new Date(p.y, p.m - 1, p.d, 0, 0, 0, 0);
+    }
+
+    function diffDays(from, to) {
+      return Math.round((toDate(to).getTime() - toDate(from).getTime()) / 86400000);
+    }
+
+    function anniversaryDateInYear(base, year) {
+      if (base.m === 2 && base.d === 29 && !isLeapYear(year)) return `${year}-02-28`;
+      return `${year}-${pad2(base.m)}-${pad2(base.d)}`;
+    }
+
+    function nextOccurrence(baseDate, today) {
+      const base = parseYMD(baseDate);
+      const t = parseYMD(today);
+      const current = anniversaryDateInYear(base, t.y);
+      return diffDays(current, today) <= 0 ? current : anniversaryDateInYear(base, t.y + 1);
+    }
+
+    function calcStatus(baseDate, today) {
+      const nextDate = nextOccurrence(baseDate, today);
+      return {
+        daysSince: diffDays(baseDate, today),
+        nextDate,
+        daysUntilNext: diffDays(today, nextDate),
+        isToday: nextDate === today
+      };
+    }
+
+    function hashText(text) {
+      let h = 5381;
+      const str = String(text || "");
+      for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0;
+      return h;
+    }
+
+    function buildVersion(items) {
+      const list = Array.isArray(items) ? items : [];
+      let active = 0;
+      let maxStamp = "";
+      let fingerprint = 0;
+      for (const item of list) {
+        if (!item.deleted) active++;
+        const stamp = item.updatedAt || item.deletedAt || item.createdAt || "";
+        if (stamp > maxStamp) maxStamp = stamp;
+        fingerprint = (fingerprint + hashText([
+          item.id, item.title, item.date, item.owner, item.mode,
+          item.sendToContext ? "1" : "0", item.deleted ? "1" : "0",
+          item.createdAt, item.updatedAt, item.deletedAt
+        ].join("|"))) | 0;
+      }
+      return `mock:${list.length}:${active}:${maxStamp}:${fingerprint}`;
+    }
+
+    function makeId() {
+      return `anniv_${todayYMD().replaceAll("-", "")}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    }
+
+    function nowIso() {
+      const now = new Date();
+      return `${todayYMD()}T${pad2(now.getHours())}:${pad2(now.getMinutes())}:${pad2(now.getSeconds())}+08:00`;
+    }
+
+    function loadMockItems() {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (_error) {}
+      const seed = [{
+        id: makeId(),
+        title: "认识纪念日",
+        date: "2026-07-03",
+        calendarType: "solar",
+        mode: "both",
+        owner: "shared",
+        description: "浏览器预览数据，不会写入 Operit 插件真实存储。",
+        sendToContext: true,
+        reminderEnabled: false,
+        reminderDaysBefore: [],
+        deleted: false,
+        createdAt: nowIso(),
+        updatedAt: nowIso()
+      }];
+      localStorage.setItem(STORE_KEY, JSON.stringify(seed));
+      return seed;
+    }
+
+    function saveMockItems(items) {
+      localStorage.setItem(STORE_KEY, JSON.stringify(items));
+    }
+
+    function mockSnapshot(params = {}) {
+      const today = params.today || todayYMD();
+      const all = loadMockItems();
+      const visible = (params.includeDeleted ? all : all.filter(item => !item.deleted))
+        .slice()
+        .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      return {
+        success: true,
+        today,
+        version: buildVersion(all),
+        count: visible.length,
+        items: visible.map(item => ({
+          ...item,
+          status: calcStatus(item.date, today)
+        }))
+      };
+    }
+
+    function ensureExpectedVersion(params, items) {
+      if (params.expectedVersion && params.expectedVersion !== buildVersion(items)) {
+        return { success: false, error: { code: "DATA_CHANGED", message: "数据已变化，请刷新后重试" } };
+      }
+      return null;
+    }
+
+    const MockBridge = {
+      async invoke(action, params = {}) {
+        const items = loadMockItems();
+        if (action === "list_snapshot") return mockSnapshot(params);
+        if (action === "create") {
+          const title = String(params.title || "").trim();
+          const date = String(params.date || "").trim();
+          if (!title) return { success: false, error: { code: "INVALID_TITLE", message: "请填写名称" } };
+          if (!isValidYMD(date)) return { success: false, error: { code: "INVALID_DATE", message: "日期格式无效，请使用 YYYY-MM-DD" } };
+          const item = {
+            id: makeId(),
+            title,
+            date,
+            calendarType: "solar",
+            mode: ["count_up", "count_down", "both"].includes(params.mode) ? params.mode : "both",
+            owner: ["user", "assistant", "shared"].includes(params.owner) ? params.owner : "user",
+            description: String(params.description || ""),
+            sendToContext: params.sendToContext === true,
+            reminderEnabled: false,
+            reminderDaysBefore: [],
+            deleted: false,
+            createdAt: nowIso(),
+            updatedAt: nowIso()
+          };
+          items.push(item);
+          saveMockItems(items);
+          return { success: true, item, snapshot: mockSnapshot(params) };
+        }
+        if (action === "update") {
+          const conflict = ensureExpectedVersion(params, items);
+          if (conflict) return conflict;
+          const item = items.find(entry => entry.id === params.id && !entry.deleted);
+          if (!item) return { success: false, error: { code: "NOT_FOUND", message: "未找到对应的纪念日" } };
+          const title = String(params.title || "").trim();
+          const date = String(params.date || "").trim();
+          if (!title) return { success: false, error: { code: "INVALID_TITLE", message: "请填写名称" } };
+          if (!isValidYMD(date)) return { success: false, error: { code: "INVALID_DATE", message: "日期格式无效，请使用 YYYY-MM-DD" } };
+          item.title = title;
+          item.date = date;
+          item.owner = params.owner;
+          item.mode = params.mode;
+          item.description = String(params.description || "");
+          item.sendToContext = params.sendToContext === true;
+          item.updatedAt = nowIso();
+          saveMockItems(items);
+          return { success: true, item, snapshot: mockSnapshot(params) };
+        }
+        if (action === "delete") {
+          const conflict = ensureExpectedVersion(params, items);
+          if (conflict) return conflict;
+          const item = items.find(entry => entry.id === params.id && !entry.deleted);
+          if (!item) return { success: false, error: { code: "NOT_FOUND", message: "未找到对应的纪念日" } };
+          item.deleted = true;
+          item.deletedAt = nowIso();
+          item.updatedAt = item.deletedAt;
+          saveMockItems(items);
+          return { success: true, id: item.id, snapshot: mockSnapshot(params) };
+        }
+        if (action === "toggle_context") {
+          const conflict = ensureExpectedVersion(params, items);
+          if (conflict) return conflict;
+          const item = items.find(entry => entry.id === params.id && !entry.deleted);
+          if (!item) return { success: false, error: { code: "NOT_FOUND", message: "未找到对应的纪念日" } };
+          item.sendToContext = params.enabled === true;
+          item.updatedAt = nowIso();
+          saveMockItems(items);
+          return { success: true, id: item.id, sendToContext: item.sendToContext, snapshot: mockSnapshot(params) };
+        }
+        return { success: false, error: { code: "INVALID_ACTION", message: "未知动作" } };
+      }
+    };
+
+    function resolveBridge() {
+      const bridge = window.AnniversaryBridge || window.OperitAnniversaryBridge;
+      if (bridge && typeof bridge.invoke === "function") {
+        state.bridgeMode = "live";
+        return bridge;
+      }
+      state.bridgeMode = "mock";
+      return MockBridge;
+    }
+
+    async function invoke(action, params = {}) {
+      const bridge = resolveBridge();
+      const raw = await bridge.invoke(action, params);
+      if (typeof raw === "string") {
+        try { return JSON.parse(raw); } catch (_error) { return { success: false, error: { code: "BRIDGE_PARSE_FAILED", message: raw } }; }
+      }
+      return raw || { success: false, error: { code: "EMPTY_RESPONSE", message: "空响应" } };
+    }
+
+    function setBridgeStatus(kind, text) {
+      $("#bridgeDot").className = `dot ${kind}`;
+      $("#bridgeMode").textContent = state.bridgeMode === "live" ? "宿主实时数据" : "浏览器预览数据";
+      $("#syncText").textContent = text;
+    }
+
+    function toast(message) {
+      const el = $("#toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => el.classList.remove("show"), 2600);
+    }
+
+    function ownerText(owner) {
+      if (owner === "assistant") return "AI";
+      if (owner === "shared") return "共同";
+      return "用户";
+    }
+
+    function modeText(mode) {
+      if (mode === "count_up") return "已过";
+      if (mode === "count_down") return "倒计";
+      return "双向";
+    }
+
+    function escapeHtml(str) {
+      return String(str || "").replace(/[&<>"']/g, ch => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[ch]));
+    }
+
+    function filteredItems() {
+      const query = state.query.trim().toLowerCase();
+      const items = state.snapshot.items || [];
+      if (!query) return items;
+      return items.filter(item => [
+        item.title,
+        item.date,
+        item.description,
+        ownerText(item.owner),
+        modeText(item.mode)
+      ].join(" ").toLowerCase().includes(query));
+    }
+
+    function render() {
+      $("#todayText").textContent = state.snapshot.today ? `今天 ${state.snapshot.today}` : "";
+      const root = $("#cards");
+      const items = filteredItems();
+      root.innerHTML = "";
+      if (!items.length) {
+        root.innerHTML = `
+          <article class="empty">
+            <h2>${state.query ? "没有匹配结果" : "暂无纪念日"}</h2>
+            <p>${state.query ? "换个关键词试试看。" : "添加第一个纪念日后，这里会显示实时天数。"}</p>
+          </article>
+        `;
+        return;
+      }
+      for (const item of items) {
+        const status = item.status || {};
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-head">
+            <div>
+              <h2>${escapeHtml(item.title)}</h2>
+              <div class="date">${escapeHtml(item.date)} · 下次 ${escapeHtml(status.nextDate || "")}</div>
+            </div>
+            <button class="switch ${item.sendToContext ? "on" : ""}" type="button" data-action="toggle" data-id="${escapeHtml(item.id)}" title="上下文发送开关"><span></span></button>
+          </div>
+          <div class="stats">
+            <div class="stat"><small>已过去</small><strong>${Number(status.daysSince || 0)}</strong> 天</div>
+            <div class="stat"><small>距下次</small><strong>${Number(status.daysUntilNext || 0)}</strong> 天</div>
+          </div>
+          <div class="tags">
+            <span class="tag">${escapeHtml(ownerText(item.owner))}</span>
+            <span class="tag">${escapeHtml(modeText(item.mode))}</span>
+            <span class="tag ${item.sendToContext ? "" : "muted"}">${item.sendToContext ? "发送上下文" : "不发送上下文"}</span>
+            ${status.isToday ? '<span class="tag">今天</span>' : ""}
+          </div>
+          <div class="description">${escapeHtml(item.description || "没有备注")}</div>
+          <div class="card-actions">
+            <button class="btn" type="button" data-action="edit" data-id="${escapeHtml(item.id)}">编辑</button>
+            <button class="btn danger" type="button" data-action="delete" data-id="${escapeHtml(item.id)}">删除</button>
+          </div>
+        `;
+        root.append(card);
+      }
+    }
+
+    async function refresh(forceRender = false) {
+      if (state.busy) return;
+      state.busy = true;
+      try {
+        const result = await invoke("list_snapshot", {});
+        if (!result.success) throw new Error(result.error?.message || "读取失败");
+        const changed = result.version !== state.snapshot.version;
+        state.snapshot = result;
+        setBridgeStatus(state.bridgeMode === "live" ? "live" : "mock", changed ? "已同步最新数据" : "数据无变化");
+        if (changed || forceRender) render();
+      } catch (error) {
+        setBridgeStatus("error", error.message || "同步失败");
+      } finally {
+        state.busy = false;
+      }
+    }
+
+    function openForm(item) {
+      state.editingVersion = state.snapshot.version;
+      $("#entryId").value = item?.id || "";
+      $("#formTitle").textContent = item ? "编辑纪念日" : "添加纪念日";
+      $("#titleInput").value = item?.title || "";
+      $("#dateInput").value = item?.date || todayYMD();
+      $("#ownerInput").value = item?.owner || "user";
+      $("#modeInput").value = item?.mode || "both";
+      $("#descriptionInput").value = item?.description || "";
+      $("#sendInput").checked = item?.sendToContext === true;
+      $("#formWrap").classList.add("open");
+      $("#formWrap").setAttribute("aria-hidden", "false");
+      $("#titleInput").focus();
+    }
+
+    function closeForm() {
+      $("#formWrap").classList.remove("open");
+      $("#formWrap").setAttribute("aria-hidden", "true");
+      $("#entryForm").reset();
+      state.editingVersion = "";
+    }
+
+    function formPayload() {
+      return {
+        id: $("#entryId").value,
+        title: $("#titleInput").value.trim(),
+        date: $("#dateInput").value.trim(),
+        owner: $("#ownerInput").value,
+        mode: $("#modeInput").value,
+        description: $("#descriptionInput").value,
+        sendToContext: $("#sendInput").checked,
+        expectedVersion: state.editingVersion
+      };
+    }
+
+    async function saveForm(event) {
+      event.preventDefault();
+      const payload = formPayload();
+      if (!payload.title) return toast("请填写名称");
+      if (!isValidYMD(payload.date)) return toast("日期格式无效，请使用 YYYY-MM-DD");
+      const action = payload.id ? "update" : "create";
+      const result = await invoke(action, payload);
+      if (!result.success) {
+        toast(result.error?.message || "保存失败");
+        await refresh(true);
+        return;
+      }
+      closeForm();
+      if (result.snapshot) state.snapshot = result.snapshot;
+      render();
+      setBridgeStatus(state.bridgeMode === "live" ? "live" : "mock", "保存完成");
+    }
+
+    async function handleCardClick(event) {
+      const button = event.target.closest("button[data-action]");
+      if (!button) return;
+      const id = button.dataset.id;
+      const item = (state.snapshot.items || []).find(entry => entry.id === id);
+      if (!item) return;
+      const action = button.dataset.action;
+      if (action === "edit") {
+        openForm(item);
+        return;
+      }
+      if (action === "delete") {
+        if (!confirm(`确定删除「${item.title}」？`)) return;
+        const result = await invoke("delete", { id, expectedVersion: state.snapshot.version });
+        if (!result.success) {
+          toast(result.error?.message || "删除失败");
+          await refresh(true);
+          return;
+        }
+        if (result.snapshot) state.snapshot = result.snapshot;
+        render();
+        setBridgeStatus(state.bridgeMode === "live" ? "live" : "mock", "删除完成");
+        return;
+      }
+      if (action === "toggle") {
+        const result = await invoke("toggle_context", {
+          id,
+          enabled: !item.sendToContext,
+          expectedVersion: state.snapshot.version
+        });
+        if (!result.success) {
+          toast(result.error?.message || "切换失败");
+          await refresh(true);
+          return;
+        }
+        if (result.snapshot) state.snapshot = result.snapshot;
+        render();
+        setBridgeStatus(state.bridgeMode === "live" ? "live" : "mock", "开关已更新");
+      }
+    }
+
+    function startPolling() {
+      clearInterval(state.pollTimer);
+      state.pollTimer = setInterval(() => {
+        if (document.visibilityState === "visible") refresh(false);
+      }, POLL_MS);
+    }
+
+    $("#createBtn").addEventListener("click", () => openForm(null));
+    $("#refreshBtn").addEventListener("click", () => refresh(true));
+    $("#closeFormBtn").addEventListener("click", closeForm);
+    $("#cancelBtn").addEventListener("click", closeForm);
+    $("#entryForm").addEventListener("submit", saveForm);
+    $("#cards").addEventListener("click", handleCardClick);
+    $("#searchInput").addEventListener("input", event => {
+      state.query = event.target.value;
+      render();
+    });
+    $("#clearSearchBtn").addEventListener("click", () => {
+      state.query = "";
+      $("#searchInput").value = "";
+      render();
+    });
+    $("#formWrap").addEventListener("click", event => {
+      if (event.target.id === "formWrap") closeForm();
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") refresh(true);
+    });
+
+    window.AnniversaryWebUI = {
+      refresh: () => refresh(true),
+      setBridge(bridge) {
+        window.AnniversaryBridge = bridge;
+        return refresh(true);
+      }
+    };
+
+    refresh(true);
+    startPolling();
+  </script>
+</body>
+</html>

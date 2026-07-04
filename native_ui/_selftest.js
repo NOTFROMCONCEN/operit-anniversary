@@ -34,6 +34,9 @@ async function main() {
     // 加载工具子包
     var tools = require("./dist/packages/anniversary_tools.js");
 
+    // 加载共享 API 层
+    var api = require("./dist/shared/anniversary_api.js");
+
     // ============================================================
     // 日期计算测试
     // ============================================================
@@ -124,6 +127,78 @@ async function main() {
     // 删除后包含已删除的列表
     var itemsWithDeleted = await service.listAnniversaries({ includeDeleted: true });
     assertEq(itemsWithDeleted.length, 1, "包含已删除列表数量=1");
+
+    // ============================================================
+    // 共享 API 层测试
+    // ============================================================
+    console.log("\n--- 共享 API 层测试 ---");
+    fileStore = {};
+
+    var snapEmpty = await api.invoke("list_snapshot", { today: "2026-07-04" });
+    assertEq(snapEmpty.success, true, "API snapshot success");
+    assertEq(snapEmpty.count, 0, "API snapshot 初始数量=0");
+    assertEq(typeof snapEmpty.version, "string", "API snapshot version 为字符串");
+
+    var apiCreated = await api.invoke("create", {
+        title: "API纪念日",
+        date: "2026-07-03",
+        owner: "shared",
+        mode: "both",
+        sendToContext: true,
+        today: "2026-07-04"
+    });
+    assertEq(apiCreated.success, true, "API create success");
+    assertEq(apiCreated.snapshot.count, 1, "API create 后 snapshot count=1");
+    assertEq(apiCreated.item.status.daysSince, 1, "API create item 带 status");
+    var apiId = apiCreated.item.id;
+    var versionAfterCreate = apiCreated.snapshot.version;
+
+    var apiToggle = await api.invoke("toggle_context", {
+        id: apiId,
+        enabled: false,
+        expectedVersion: versionAfterCreate,
+        today: "2026-07-04"
+    });
+    assertEq(apiToggle.success, true, "API toggle success");
+    assertEq(apiToggle.sendToContext, false, "API toggle sendToContext=false");
+    assertEq(apiToggle.snapshot.version !== versionAfterCreate, true, "API toggle 后 version 变化");
+
+    var staleUpdate = await api.invoke("update", {
+        id: apiId,
+        title: "旧版本更新",
+        date: "2026-07-03",
+        expectedVersion: versionAfterCreate,
+        today: "2026-07-04"
+    });
+    assertEq(staleUpdate.success, false, "API stale update 失败");
+    assertEq(staleUpdate.error.code, "DATA_CHANGED", "API stale update 返回 DATA_CHANGED");
+
+    var freshUpdate = await api.invoke("update", {
+        id: apiId,
+        title: "API纪念日更新",
+        date: "2026-07-05",
+        owner: "user",
+        mode: "count_down",
+        description: "更新备注",
+        sendToContext: false,
+        expectedVersion: apiToggle.snapshot.version,
+        today: "2026-07-04"
+    });
+    assertEq(freshUpdate.success, true, "API fresh update success");
+    assertEq(freshUpdate.item.title, "API纪念日更新", "API fresh update 标题");
+    assertEq(freshUpdate.item.status.daysUntilNext, 1, "API fresh update status 倒计=1");
+
+    var apiDelete = await api.invoke("delete", {
+        id: apiId,
+        expectedVersion: freshUpdate.snapshot.version,
+        today: "2026-07-04"
+    });
+    assertEq(apiDelete.success, true, "API delete success");
+    assertEq(apiDelete.snapshot.count, 0, "API delete 后 count=0");
+
+    var badAction = await api.invoke("missing_action", {});
+    assertEq(badAction.success, false, "API 未知动作失败");
+    assertEq(badAction.error.code, "INVALID_ACTION", "API 未知动作错误码");
 
     // ============================================================
     // 工具子包测试（通过 tools 导出）

@@ -410,7 +410,63 @@ node native_ui/_selftest.js
 
 ---
 
-## 十一、防剽窃与作者权益保护
+## 十一、Web UI 实时更新方案
+
+项目新增一个可独立打开的 Web UI：[`simple_web_ui/simple_index.html`](simple_web_ui/simple_index.html:1)。它与 [`simple_web_ui/les_jours_mock.html`](simple_web_ui/les_jours_mock.html:1) 的定位不同：
+
+| 文件 | 定位 |
+| ---- | ---- |
+| `simple_index.html` | 真实纪念日管理 Web UI，支持 bridge、实时轮询、CRUD、上下文开关 |
+| `les_jours_mock.html` | 视觉原型 / 日历氛围参考，仍使用浏览器本地 demo 数据 |
+
+### 共享 API 层
+
+Web UI 不直接读写 `anniversaries.json`，而是通过 [`native_ui/dist/shared/anniversary_api.js`](native_ui/dist/shared/anniversary_api.js:1) 统一调用现有 service 层：
+
+| API action | 说明 |
+| ---------- | ---- |
+| `list_snapshot` | 返回 `{ success, today, version, count, items }`，每个 item 带实时 `status` |
+| `create` | 新建纪念日并返回最新 snapshot |
+| `update` | 更新纪念日并返回最新 snapshot |
+| `delete` | 软删除纪念日并返回最新 snapshot |
+| `toggle_context` | 切换 `sendToContext` 并返回最新 snapshot |
+| `get_status` | 查询单条纪念日状态 |
+
+`version` 由现有数据字段计算，不改变 `anniversaries.json` 的数组结构。Web UI 在编辑、删除、切换时会提交 `expectedVersion`；如果数据已经被 AI 工具或其他页面改动，API 返回 `DATA_CHANGED`，避免旧页面覆盖新数据。
+
+### 运行模式
+
+1. **Operit 原生 UI 模式**：当前正式内置入口仍是 `compose_dsl`，由 `ToolPkg.registerUiRoute({ runtime: "compose_dsl" })` 注册。
+2. **普通浏览器预览模式**：直接打开 `simple_web_ui/simple_index.html`，页面会自动使用 `MockBridge` 和 `localStorage`，不写入真实插件数据。
+3. **宿主 WebView bridge 模式**：如果 Operit 后续支持 HTML/WebView 路由，宿主只需要注入以下对象之一：
+
+```js
+window.AnniversaryBridge = {
+  async invoke(action, params) {
+    // action: list_snapshot / create / update / delete / toggle_context / get_status
+    // params: 普通 JSON 对象
+    // return: anniversary_api.invoke(action, params) 的结果
+  }
+};
+```
+
+页面也兼容 `window.OperitAnniversaryBridge.invoke(action, params)` 别名。bridge 返回对象或 JSON 字符串均可。
+
+### 实时刷新
+
+Web UI 默认每 2 秒调用一次 `list_snapshot`。只有 `version` 变化时才重新渲染；页面隐藏时暂停主动轮询，重新可见时立即刷新。用户本地保存、删除、切换成功后会直接使用返回的 snapshot 更新页面，不等待下一轮轮询。
+
+### 自测
+
+```bash
+node simple_web_ui/_selftest.js
+```
+
+该脚本验证 Web UI 中的 bridge、mock fallback、`list_snapshot`、`expectedVersion` 与轮询入口仍存在。
+
+---
+
+## 十二、防剽窃与作者权益保护
 
 本项目采用 **强力分层防护** 策略，防止项目被剽窃、作者信息被删除后声称原创。防护机制编织进功能性代码，即使侵权者删除可见版权头，残留指纹仍可作为原创归属的取证证据。
 

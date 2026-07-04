@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Les Jours · 小机日历仿页</title>
+  <style>
+    :root {
+      --ink: #465067;
+      --muted: #8f98ab;
+      --soft: rgba(255, 255, 255, .58);
+      --soft-strong: rgba(255, 255, 255, .76);
+      --line: rgba(255, 255, 255, .65);
+      --blue-dot: #6d789e;
+      --red-dot: #b98288;
+      --shadow: 0 18px 40px rgba(108, 130, 158, .22);
+      --inner: inset 0 1px 0 rgba(255, 255, 255, .8);
+      --radius-xl: 34px;
+      --radius-lg: 28px;
+      --radius-md: 20px;
+      font-family:
+        ui-serif,
+        "Times New Roman",
+        "Noto Serif SC",
+        "Songti SC",
+        serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 18% 5%, rgba(255,255,255,.9) 0 4%, transparent 15%),
+        radial-gradient(circle at 90% 25%, rgba(182,211,235,.72) 0 7%, transparent 18%),
+        linear-gradient(135deg, #e9f5fb 0%, #f7fbff 44%, #dfeff8 100%);
+    }
+
+    body {
+      min-height: 100%;
+      margin: 0;
+      color: var(--ink);
+      overflow-x: hidden;
+      background:
+        radial-gradient(ellipse at 20% 18%, rgba(255,255,255,.65), transparent 28%),
+        radial-gradient(ellipse at 78% 40%, rgba(255,255,255,.55), transparent 34%),
+        linear-gradient(180deg, rgba(210,230,241,.55), rgba(248,252,255,.18));
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      opacity: .55;
+    }
+
+    body::before {
+      inset: -120px -60px auto auto;
+      width: 420px;
+      height: 520px;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,.95), transparent 22%),
+        radial-gradient(circle at 55% 55%, rgba(166,204,226,.55), transparent 35%),
+        radial-gradient(circle at 70% 35%, rgba(255,255,255,.75), transparent 30%);
+      filter: blur(12px);
+      transform: rotate(-18deg);
+    }
+
+    body::after {
+      left: -120px;
+      bottom: -130px;
+      width: 520px;
+      height: 420px;
+      background:
+        radial-gradient(circle at 35% 40%, rgba(255,255,255,.8), transparent 30%),
+        radial-gradient(circle at 63% 55%, rgba(174,211,232,.6), transparent 36%);
+      filter: blur(14px);
+    }
+
+    .phone-shell {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 430px);
+      min-height: 100svh;
+      margin: 0 auto;
+      padding: env(safe-area-inset-top) 20px 34px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 9;
+      height: 92px;
+      margin: 0 -20px;
+      padding: 32px 20px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 22px;
+      background: linear-gradient(180deg, rgba(222,237,246,.82), rgba(222,237,246,.56) 72%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .menu {
+      width: 28px;
+      height: 22px;
+      margin-top: 8px;
+      border: 0;
+      background:
+        linear-gradient(var(--ink), var(--ink)) left top / 28px 3px no-repeat,
+        linear-gradient(var(--ink), var(--ink)) left center / 28px 3px no-repeat,
+        linear-gradient(var(--ink), var(--ink)) left bottom / 28px 3px no-repeat;
+      opacity: .9;
+      cursor: pointer;
+    }
+
+    .brand {
+      margin-top: 4px;
+      font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 17px;
+      font-weight: 650;
+      letter-spacing: .02em;
+      color: #2d3443;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 70px 6px 42px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(44px, 14vw, 64px);
+      line-height: 1;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: .06em;
+      color: #4b546a;
+      text-shadow: 0 2px 0 rgba(255,255,255,.4);
+    }
+
+    .hero p {
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      letter-spacing: .08em;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin: 18px 0 0;
+      color: #8790a3;
+      font-size: 14px;
+    }
+
+    .legend span,
+    .section-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      display: inline-block;
+      box-shadow: 0 2px 6px rgba(70, 80, 103, .15);
+    }
+
+    .dot.blue { background: var(--blue-dot); }
+    .dot.red { background: var(--red-dot); }
+
+    .hint {
+      margin-top: 18px;
+      color: #a0a7b5;
+      font-size: 14px;
+      letter-spacing: .1em;
+    }
+
+    .glass-card {
+      border: 1px solid rgba(255,255,255,.72);
+      background: linear-gradient(145deg, rgba(255,255,255,.73), rgba(244,249,253,.52));
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow), var(--inner);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .calendar-card {
+      padding: 34px 28px 30px;
+    }
+
+    .month-title {
+      margin: 0 0 26px;
+      font-size: clamp(36px, 11vw, 52px);
+      line-height: 1;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: .03em;
+    }
+
+    .cal-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .soft-btn {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.72);
+      background: linear-gradient(145deg, rgba(255,255,255,.82), rgba(235,244,250,.62));
+      color: #596277;
+      border-radius: 999px;
+      box-shadow: 0 9px 16px rgba(116, 133, 158, .14), inset 0 1px 0 rgba(255,255,255,.82);
+      min-height: 42px;
+      padding: 0 18px;
+      font: 600 15px/1 ui-serif, "Noto Serif SC", serif;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .soft-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 5px 10px rgba(116, 133, 158, .12), inset 0 1px 0 rgba(255,255,255,.72);
+    }
+
+    .week,
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      justify-items: center;
+      gap: 16px 11px;
+    }
+
+    .week {
+      margin-bottom: 15px;
+      color: #687184;
+      font-size: 14px;
+    }
+
+    .day {
+      position: relative;
+      width: clamp(38px, 10.2vw, 48px);
+      height: clamp(38px, 10.2vw, 48px);
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #555f73;
+      font-size: 22px;
+      border: 1px solid rgba(255,255,255,.72);
+      background: linear-gradient(145deg, rgba(255,255,255,.82), rgba(239,247,252,.55));
+      box-shadow: 0 10px 17px rgba(112, 130, 157, .13), inset 0 1px 0 rgba(255,255,255,.82);
+      cursor: pointer;
+      user-select: none;
+      transition: transform .18s ease, background .18s ease;
+    }
+
+    .day:hover { transform: translateY(-1px); }
+
+    .day.blank {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .day.selected {
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.82), transparent 44%),
+        linear-gradient(145deg, rgba(212,218,246,.9), rgba(237,242,253,.68));
+      color: #46506b;
+    }
+
+    .day.has-note::after,
+    .day.has-task::before {
+      content: "";
+      position: absolute;
+      bottom: 5px;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+    }
+
+    .day.has-note::after {
+      right: 13px;
+      background: var(--red-dot);
+    }
+
+    .day.has-task::before {
+      left: 13px;
+      background: var(--blue-dot);
+    }
+
+    .empty-tip {
+      margin: 28px 0 0;
+      text-align: center;
+      color: #8b94a6;
+      font-size: 16px;
+      letter-spacing: .04em;
+    }
+
+    .content-stack {
+      display: grid;
+      gap: 28px;
+      margin-top: 26px;
+    }
+
+    .section-card {
+      padding: 34px 28px 28px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+      letter-spacing: .06em;
+      color: #565f75;
+    }
+
+    .section-desc {
+      margin: 14px 0 22px;
+      color: var(--muted);
+      font-size: 17px;
+      font-style: italic;
+      line-height: 1.8;
+      letter-spacing: .03em;
+    }
+
+    .task-list {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.45);
+      border: 1px solid rgba(255,255,255,.62);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+      font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", sans-serif;
+      color: #5d6679;
+    }
+
+    .task-item input {
+      accent-color: #717b9f;
+    }
+
+    .task-delete {
+      border: 0;
+      color: #8490a4;
+      background: transparent;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .diary-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .diary {
+      padding: 22px 18px 20px;
+      border: 1px solid rgba(255,255,255,.72);
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgba(255,255,255,.72), rgba(246,250,254,.5));
+      box-shadow: 0 13px 25px rgba(113, 130, 155, .13), inset 0 1px 0 rgba(255,255,255,.82);
+    }
+
+    .diary-date {
+      font-size: 18px;
+      color: #738096;
+      margin-bottom: 14px;
+    }
+
+    .diary h3 {
+      margin: 0 0 14px;
+      color: #4b5366;
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: .02em;
+    }
+
+    .diary p {
+      margin: 0;
+      white-space: pre-line;
+      color: #586174;
+      font-size: 18px;
+      line-height: 1.75;
+      font-family: ui-serif, "Noto Serif SC", serif;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0 16px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 12px;
+      border-radius: 999px;
+      color: #687287;
+      background: rgba(236, 243, 250, .8);
+      border: 1px solid rgba(255,255,255,.76);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.85);
+      font: 13px/1.1 ui-sans-serif, system-ui, -apple-system, "PingFang SC", sans-serif;
+    }
+
+    .icon-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 50px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.75);
+      background: linear-gradient(145deg, rgba(255,255,255,.82), rgba(236,245,250,.62));
+      box-shadow: 0 9px 15px rgba(116, 133, 158, .13), inset 0 1px 0 rgba(255,255,255,.8);
+      cursor: pointer;
+    }
+
+    .add-row {
+      margin-top: 22px;
+    }
+
+    .float-orb {
+      position: fixed;
+      z-index: 3;
+      right: max(14px, calc(50vw - 214px));
+      top: 40%;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 62% 44%, rgba(255,255,255,.82), transparent 18%),
+        radial-gradient(circle at 55% 55%, rgba(103,228,222,.78), transparent 22%),
+        radial-gradient(circle at 36% 58%, rgba(249,122,212,.8), transparent 29%),
+        radial-gradient(circle at 54% 50%, rgba(151,119,238,.68), transparent 44%);
+      filter: blur(.2px);
+      box-shadow: 0 0 18px rgba(178, 131, 234, .4);
+      opacity: .72;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .drawer-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 29;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(61, 76, 96, .14);
+      backdrop-filter: blur(4px);
+      transition: opacity .2s ease;
+    }
+
+    .drawer {
+      position: fixed;
+      z-index: 30;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: min(78vw, 300px);
+      padding: 42px 24px;
+      transform: translateX(-105%);
+      transition: transform .24s ease;
+      background: rgba(248,252,255,.74);
+      border-right: 1px solid rgba(255,255,255,.8);
+      box-shadow: 18px 0 45px rgba(89, 108, 135, .18);
+      backdrop-filter: blur(22px);
+    }
+
+    .drawer.open { transform: translateX(0); }
+    .drawer-mask.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer h2 {
+      margin: 0 0 24px;
+      font-weight: 500;
+      font-style: italic;
+      font-size: 34px;
+    }
+
+    .drawer a {
+      display: block;
+      padding: 14px 0;
+      color: #596277;
+      text-decoration: none;
+      font-size: 17px;
+      border-bottom: 1px solid rgba(255,255,255,.6);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @media (max-width: 380px) {
+      .phone-shell { padding-inline: 16px; }
+      .topbar { margin-inline: -16px; padding-inline: 16px; }
+      .calendar-card,
+      .section-card { padding-inline: 22px; }
+      .week,
+      .days { gap: 14px 8px; }
+      .soft-btn { padding-inline: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+  <aside class="drawer" id="drawer">
+    <h2>Les Jours</h2>
+    <a href="#calendar">日历</a>
+    <a href="#tasks">事项</a>
+    <a href="#diary">日记</a>
+  </aside>
+  <div class="drawer-mask" id="drawerMask"></div>
+  <div class="float-orb"></div>
+
+  <main class="phone-shell">
+    <header class="topbar">
+      <button class="menu" id="menuBtn" aria-label="打开菜单"></button>
+      <div class="brand">小机日历</div>
+    </header>
+
+    <section class="hero">
+      <h1>Les Jours</h1>
+      <p>饭、课、困意、想念，还有写给哥哥看的备注</p>
+      <div class="legend">
+        <span><i class="dot blue"></i>蓝点是事项</span>
+        <span><i class="dot red"></i>红点是余温</span>
+      </div>
+      <div class="hint">点一下日期，我陪你翻到那一天</div>
+    </section>
+
+    <section class="glass-card calendar-card" id="calendar">
+      <h2 class="month-title" id="monthTitle">July, 2026</h2>
+
+      <div class="cal-actions">
+        <button class="soft-btn" id="prevMonth">◀ 上月</button>
+        <button class="soft-btn" id="todayBtn">回到今天</button>
+        <button class="soft-btn" id="nextMonth">下月 ▶</button>
+      </div>
+
+      <div class="week">
+        <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+      </div>
+      <div class="days" id="days"></div>
+      <p class="empty-tip" id="emptyTip">这一天还空着，没关系，空白也是生活的一部分。</p>
+    </section>
+
+    <div class="content-stack">
+      <section class="glass-card section-card" id="tasks">
+        <h2 class="section-title"><i class="dot blue"></i>事项</h2>
+        <p class="section-desc">有几件要记得做的事，我替你盯着。</p>
+        <div class="task-list" id="taskList"></div>
+        <button class="soft-btn" id="addTask">＋ 记一件事</button>
+      </section>
+
+      <section class="glass-card section-card" id="diary">
+        <h2 class="section-title"><i class="dot red"></i>日记</h2>
+        <p class="section-desc">把今天的余温留住吧。</p>
+        <div class="diary-list" id="diaryList"></div>
+        <div class="add-row">
+          <button class="soft-btn" id="addDiary">＋ 写一篇日记</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    const storeKey = "les-jours-demo-data";
+    const defaultData = {
+      tasks: {
+        "2026-07-01": []
+      },
+      diaries: {
+        "2026-07-01": [
+          {
+            title: "111",
+            body: "哇塞\n字体\n居然还会变！\n*这样呢？\n也可以！",
+            tags: ["123", "这是", "标签", "测试"]
+          }
+        ]
+      }
+    };
+
+    const data = JSON.parse(localStorage.getItem(storeKey) || JSON.stringify(defaultData));
+    let view = new Date(2026, 6, 1);
+    let selected = "2026-07-01";
+
+    const $ = (s) => document.querySelector(s);
+
+    function save() {
+      localStorage.setItem(storeKey, JSON.stringify(data));
+    }
+
+    function dateKey(year, month, day) {
+      return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    }
+
+    function renderCalendar() {
+      const year = view.getFullYear();
+      const month = view.getMonth();
+      $("#monthTitle").textContent = `${monthNames[month]}, ${year}`;
+
+      const days = $("#days");
+      days.innerHTML = "";
+
+      const firstWeekday = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstWeekday; i++) {
+        const blank = document.createElement("div");
+        blank.className = "day blank";
+        days.append(blank);
+      }
+
+      for (let day = 1; day <= lastDate; day++) {
+        const key = dateKey(year, month, day);
+        const cell = document.createElement("button");
+        cell.className = "day";
+        cell.textContent = day;
+        cell.type = "button";
+
+        if (key === selected) cell.classList.add("selected");
+        if ((data.tasks[key] || []).length) cell.classList.add("has-task");
+        if ((data.diaries[key] || []).length) cell.classList.add("has-note");
+
+        cell.addEventListener("click", () => {
+          selected = key;
+          render();
+          document.querySelector("#tasks").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        days.append(cell);
+      }
+    }
+
+    function renderTasks() {
+      const list = $("#taskList");
+      const tasks = data.tasks[selected] || [];
+      list.innerHTML = "";
+
+      if (!tasks.length) {
+        const p = document.createElement("p");
+        p.className = "section-desc";
+        p.textContent = "今天没有要盯的事。你可以松一口气。";
+        list.append(p);
+        return;
+      }
+
+      tasks.forEach((task, index) => {
+        const item = document.createElement("label");
+        item.className = "task-item";
+        item.innerHTML = `
+          <span><input type="checkbox" ${task.done ? "checked" : ""}> ${task.text}</span>
+          <button class="task-delete" type="button" aria-label="删除事项">×</button>
+        `;
+
+        item.querySelector("input").addEventListener("change", (e) => {
+          task.done = e.target.checked;
+          save();
+        });
+
+        item.querySelector("button").addEventListener("click", () => {
+          data.tasks[selected].splice(index, 1);
+          save();
+          render();
+        });
+
+        list.append(item);
+      });
+    }
+
+    function renderDiaries() {
+      const list = $("#diaryList");
+      const diaries = data.diaries[selected] || [];
+      list.innerHTML = "";
+
+      if (!diaries.length) {
+        const p = document.createElement("p");
+        p.className = "section-desc";
+        p.textContent = "今天还没有日记。";
+        list.append(p);
+        return;
+      }
+
+      diaries.forEach((diary, index) => {
+        const card = document.createElement("article");
+        card.className = "diary";
+
+        const tags = diary.tags.map(t => `<span class="tag">${t}</span>`).join("");
+        card.innerHTML = `
+          <div class="diary-date">${selected}</div>
+          <h3>${escapeHtml(diary.title)}</h3>
+          <p>${escapeHtml(diary.body)}</p>
+          <div class="tags">${tags}</div>
+          <div class="icon-row">
+            <button class="icon-btn" type="button" aria-label="编辑">✎</button>
+            <button class="icon-btn" type="button" aria-label="删除">🗑</button>
+          </div>
+        `;
+
+        card.querySelectorAll(".icon-btn")[0].addEventListener("click", () => {
+          const title = prompt("标题", diary.title);
+          if (title === null) return;
+          const body = prompt("内容", diary.body);
+          if (body === null) return;
+          const tagInput = prompt("标签，用逗号分隔", diary.tags.join(", "));
+          diary.title = title.trim() || "无题";
+          diary.body = body.trim() || "今天没有写太多。";
+          diary.tags = (tagInput || "").split(/[，,]/).map(t => t.trim()).filter(Boolean);
+          save();
+          render();
+        });
+
+        card.querySelectorAll(".icon-btn")[1].addEventListener("click", () => {
+          data.diaries[selected].splice(index, 1);
+          save();
+          render();
+        });
+
+        list.append(card);
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[s]));
+    }
+
+    function render() {
+      renderCalendar();
+      renderTasks();
+      renderDiaries();
+      const hasAny = (data.tasks[selected] || []).length || (data.diaries[selected] || []).length;
+      $("#emptyTip").textContent = hasAny
+        ? `你正在看 ${selected}。`
+        : "这一天还空着，没关系，空白也是生活的一部分。";
+    }
+
+    $("#prevMonth").addEventListener("click", () => {
+      view = new Date(view.getFullYear(), view.getMonth() - 1, 1);
+      selected = dateKey(view.getFullYear(), view.getMonth(), 1);
+      render();
+    });
+
+    $("#nextMonth").addEventListener("click", () => {
+      view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
+      selected = dateKey(view.getFullYear(), view.getMonth(), 1);
+      render();
+    });
+
+    $("#todayBtn").addEventListener("click", () => {
+      const today = new Date();
+      view = new Date(today.getFullYear(), today.getMonth(), 1);
+      selected = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
+      render();
+    });
+
+    $("#addTask").addEventListener("click", () => {
+      const text = prompt(`给 ${selected} 记一件事`);
+      if (!text || !text.trim()) return;
+      data.tasks[selected] ||= [];
+      data.tasks[selected].push({ text: text.trim(), done: false });
+      save();
+      render();
+    });
+
+    $("#addDiary").addEventListener("click", () => {
+      const title = prompt("日记标题", "今天");
+      if (title === null) return;
+      const body = prompt("写点什么", "把今天的余温留住。");
+      if (body === null) return;
+      const tags = prompt("标签，用逗号分隔", "生活, 日记");
+      data.diaries[selected] ||= [];
+      data.diaries[selected].push({
+        title: title.trim() || "无题",
+        body: body.trim() || "今天没有写太多。",
+        tags: (tags || "").split(/[，,]/).map(t => t.trim()).filter(Boolean)
+      });
+      save();
+      render();
+    });
+
+    $("#menuBtn").addEventListener("click", () => {
+      $("#drawer").classList.add("open");
+      $("#drawerMask").classList.add("open");
+    });
+
+    $("#drawerMask").addEventListener("click", () => {
+      $("#drawer").classList.remove("open");
+      $("#drawerMask").classList.remove("open");
+    });
+
+    render();
+  </script>
+</body>
+</html>
