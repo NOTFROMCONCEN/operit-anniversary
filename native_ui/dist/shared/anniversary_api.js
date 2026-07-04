@@ -198,6 +198,9 @@ async function invoke(action, params) {
         if (error && error.matches) {
             errResult.error.matches = error.matches;
         }
+        if (error && error.currentVersion) {
+            errResult.error.currentVersion = error.currentVersion;
+        }
         return errResult;
     }
 }

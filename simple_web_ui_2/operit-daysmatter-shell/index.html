@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Operit Shell</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="phone-shell" id="app">
+    <section class="hero">
+      <div class="statusbar">
+        <span>9:41</span>
+        <span>Operit</span>
+        <span>100%</span>
+      </div>
+      <div class="hero-main">
+        <div class="calendar-logo" aria-label="Operit Logo">
+          <span class="calendar-title">OP</span>
+          <strong id="enabledCount">08</strong>
+        </div>
+        <div class="hero-copy">
+          <p class="eyebrow">Operit AI</p>
+          <h1>插件工作台</h1>
+          <p>管理 Skill、MCP、自动化任务与权限</p>
+        </div>
+        <button class="icon-button" id="openSearch" aria-label="搜索插件">⌕</button>
+      </div>
+      <div class="hero-metrics">
+        <article>
+          <b id="totalPlugins">12</b>
+          <span>插件</span>
+        </article>
+        <article>
+          <b id="runningJobs">2</b>
+          <span>运行中</span>
+        </article>
+        <article>
+          <b id="todayRuns">46</b>
+          <span>今日调用</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="page active" data-page="home">
+        <div class="section-heading">
+          <div>
+            <p>今天</p>
+            <h2>插件状态</h2>
+          </div>
+          <button class="text-button" id="openCreate">新建任务</button>
+        </div>
+        <div class="event-list" id="homeList"></div>
+      </div>
+
+      <div class="page" data-page="plugins">
+        <div class="section-heading">
+          <div>
+            <p>插件中心</p>
+            <h2>启用与配置</h2>
+          </div>
+          <button class="text-button" id="syncPlugins">同步</button>
+        </div>
+        <label class="search-box">
+          <span>⌕</span>
+          <input id="pluginSearch" type="search" placeholder="搜索 Skill / MCP / 工具包" />
+        </label>
+        <div class="plugin-grid" id="pluginGrid"></div>
+      </div>
+
+      <div class="page" data-page="jobs">
+        <div class="section-heading">
+          <div>
+            <p>自动化</p>
+            <h2>定时任务</h2>
+          </div>
+          <button class="text-button" id="runAllJobs">运行全部</button>
+        </div>
+        <div class="job-board" id="jobBoard"></div>
+      </div>
+
+      <div class="page" data-page="logs">
+        <div class="section-heading">
+          <div>
+            <p>审计</p>
+            <h2>运行日志</h2>
+          </div>
+          <button class="text-button" id="clearLogs">清空</button>
+        </div>
+        <div class="log-panel" id="logPanel"></div>
+      </div>
+    </section>
+
+    <nav class="tabbar" aria-label="主导航">
+      <button class="active" data-tab="home"><span>⌂</span>首页</button>
+      <button data-tab="plugins"><span>◇</span>插件</button>
+      <button data-tab="jobs"><span>◷</span>任务</button>
+      <button data-tab="logs"><span>≡</span>日志</button>
+    </nav>
+  </main>
+
+  <dialog class="sheet" id="pluginSheet">
+    <form method="dialog" class="sheet-card">
+      <div class="sheet-handle"></div>
+      <header>
+        <div>
+          <p id="sheetType">Skill</p>
+          <h3 id="sheetTitle">插件配置</h3>
+        </div>
+        <button class="icon-button close" value="cancel" aria-label="关闭">×</button>
+      </header>
+      <div class="sheet-body">
+        <label class="field">
+          <span>入口 / Endpoint</span>
+          <input id="endpointInput" value="local://operit/plugin" />
+        </label>
+        <label class="field">
+          <span>运行模式</span>
+          <select id="modeInput">
+            <option>按需调用</option>
+            <option>常驻后台</option>
+            <option>定时触发</option>
+          </select>
+        </label>
+        <div class="permission-box">
+          <p>权限</p>
+          <label><input type="checkbox" checked /> 文件访问</label>
+          <label><input type="checkbox" /> 网络请求</label>
+          <label><input type="checkbox" /> 系统自动化</label>
+          <label><input type="checkbox" /> 终端执行</label>
+        </div>
+      </div>
+      <footer>
+        <button class="secondary" type="button" id="testPlugin">测试连接</button>
+        <button class="primary" value="default">保存配置</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <script src="./app.js"></script>
+</body>
+</html>

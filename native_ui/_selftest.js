@@ -172,6 +172,7 @@ async function main() {
     });
     assertEq(staleUpdate.success, false, "API stale update 失败");
     assertEq(staleUpdate.error.code, "DATA_CHANGED", "API stale update 返回 DATA_CHANGED");
+    assertEq(staleUpdate.error.currentVersion, apiToggle.snapshot.version, "API stale update 返回 currentVersion");
 
     var freshUpdate = await api.invoke("update", {
         id: apiId,

@@ -33,9 +33,19 @@ assertIncludes("const MockBridge", "包含浏览器 MockBridge");
 assertIncludes("list_snapshot", "使用 list_snapshot 快照接口");
 assertIncludes("toggle_context", "使用 toggle_context 接口");
 assertIncludes("expectedVersion", "提交变更带 expectedVersion");
+assertIncludes("currentVersion", "冲突响应可接收 currentVersion");
+assertIncludes("pendingRefresh", "包含延迟补刷机制");
+assertIncludes("refreshNonce", "包含旧轮询丢弃 token");
+assertIncludes("state.mutating", "保存期间抑制轮询覆盖");
 assertIncludes("setInterval", "包含实时轮询");
 assertIncludes("document.visibilityState", "页面隐藏时控制轮询");
 assertIncludes("window.AnniversaryWebUI", "暴露调试刷新入口");
+assertIncludes("root.replaceChildren()", "列表清空使用 DOM API");
+assertIncludes("data-tab=\"context\"", "顶部上下文筛选 tab 存在");
+assertIncludes("data-tab=\"elapsed\"", "顶部已发生筛选 tab 存在");
+assertIncludes("toggleViewMode", "顶部九宫格切换视图");
+assertIncludes("drawer-action", "侧栏快捷操作存在");
+assertIncludes("more-menu", "更多菜单存在");
 assertMatch(/POLL_MS\s*=\s*2000/, "轮询间隔为 2000ms");
 
 if (process.exitCode === 1) {

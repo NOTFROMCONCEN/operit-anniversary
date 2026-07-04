@@ -8,18 +8,22 @@
   <style>
     :root {
       color-scheme: light;
-      --bg: #eef6f8;
-      --panel: rgba(255, 255, 255, .82);
-      --panel-strong: rgba(255, 255, 255, .94);
-      --ink: #26313f;
-      --muted: #6f7b8d;
-      --line: rgba(103, 123, 143, .2);
-      --accent: #3b7c82;
-      --accent-soft: #d8eef0;
-      --warn: #a85658;
-      --warn-soft: #f6dddc;
-      --shadow: 0 18px 44px rgba(65, 91, 117, .14);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      --blue: #2f8bd5;
+      --blue-deep: #2179c4;
+      --blue-soft: #e7f2fc;
+      --orange: #ff8528;
+      --orange-deep: #f17116;
+      --red: #ff4356;
+      --warn-soft: #ffe3e3;
+      --ink: #2d2d2d;
+      --muted: #8b8b8b;
+      --line: #dedede;
+      --page: #f1f1f1;
+      --card: #ffffff;
+      --tab: #aeb3b8;
+      --shell-max: 1120px;
+      --metric-width: 112px;
+      font-family: Roboto, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
     }
 
     * { box-sizing: border-box; }
@@ -27,280 +31,418 @@
     html, body {
       min-height: 100%;
       margin: 0;
-      background:
-        radial-gradient(circle at 12% 10%, rgba(255,255,255,.88), transparent 28%),
-        radial-gradient(circle at 88% 4%, rgba(217,235,238,.9), transparent 24%),
-        linear-gradient(135deg, #edf7f8 0%, #f8fbfb 46%, #e5f0f3 100%);
+      background: #d9d9d9;
       color: var(--ink);
     }
 
-    body {
-      overflow-x: hidden;
-    }
+    body { overflow-x: hidden; }
 
-    button, input, select, textarea {
-      font: inherit;
-    }
+    button, input, select, textarea { font: inherit; }
 
     button {
       border: 0;
       cursor: pointer;
+      background: transparent;
     }
 
     .app {
-      width: min(1120px, 100%);
+      width: min(100%, var(--shell-max));
       min-height: 100svh;
       margin: 0 auto;
-      padding: 28px 20px 42px;
+      padding: 0 0 28px;
+      background: var(--page);
+      box-shadow: 0 0 32px rgba(0, 0, 0, .18);
     }
 
     .topbar {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 18px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      height: 56px;
+      display: flex;
       align-items: center;
-      margin-bottom: 22px;
+      gap: 12px;
+      padding: 0 12px;
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .22);
+    }
+
+    .menu-icon,
+    .top-icon {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .top-icon.active {
+      background: rgba(255, 255, 255, .16);
+      border-radius: 4px;
+    }
+
+    .menu-icon span {
+      width: 18px;
+      height: 2px;
+      display: block;
+      background: currentColor;
+      box-shadow: 0 -6px 0 currentColor, 0 6px 0 currentColor;
+    }
+
+    .title {
+      min-width: 0;
+      flex: 1;
     }
 
     .title h1 {
       margin: 0;
-      font-size: clamp(28px, 6vw, 48px);
-      line-height: 1.05;
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 650;
       letter-spacing: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .title p {
-      margin: 10px 0 0;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.6;
+      display: none;
     }
 
     .toolbar {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: flex-end;
+      gap: 4px;
     }
 
     .btn {
-      min-height: 40px;
+      min-height: 36px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 0 14px;
-      border-radius: 8px;
-      background: var(--panel-strong);
+      padding: 0 12px;
+      border-radius: 4px;
+      background: #fff;
       color: var(--ink);
-      border: 1px solid var(--line);
-      box-shadow: 0 8px 18px rgba(57, 80, 105, .08);
+      border: 1px solid #d1d1d1;
     }
 
     .btn.primary {
-      background: var(--accent);
+      background: var(--blue);
       color: #fff;
       border-color: transparent;
     }
 
     .btn.danger {
       background: var(--warn-soft);
-      color: var(--warn);
-      border-color: rgba(168, 86, 88, .2);
+      color: #b34040;
+      border-color: #f0c6c6;
     }
 
     .status-strip {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      align-items: center;
-      padding: 12px 14px;
-      margin-bottom: 16px;
-      border-radius: 8px;
-      background: rgba(255,255,255,.62);
-      border: 1px solid rgba(255,255,255,.78);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.88);
-      color: var(--muted);
-      font-size: 13px;
+      height: 52px;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-around;
+      padding: 0;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      color: var(--tab);
+      font-size: 12px;
     }
 
-    .status-strip strong {
-      color: var(--ink);
-      font-weight: 650;
+    .status-strip > .tab-btn {
+      min-width: 0;
+      flex: 1;
+      display: grid;
+      place-items: center;
+      border-bottom: 2px solid transparent;
+      color: var(--tab);
+      background: #fff;
     }
+
+    .status-strip > .tab-btn.active {
+      color: var(--blue);
+      border-bottom-color: var(--blue);
+    }
+
+    .status-strip strong,
+    #syncText,
+    #todayText { display: none; }
 
     .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 8px;
-      background: #9aa7b5;
+      width: 22px;
+      height: 22px;
+      margin: 0;
+      border-radius: 4px;
+      display: inline-grid;
+      place-items: center;
+      background: transparent;
     }
 
-    .dot.live { background: #2f9d72; }
-    .dot.mock { background: #c1872f; }
-    .dot.error { background: #b45151; }
+    .dot::before {
+      content: "23";
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 3px;
+      background: currentColor;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .tab-btn[data-tab="context"]::before {
+      content: "▣";
+      font-size: 23px;
+    }
+
+    .tab-btn[data-tab="elapsed"]::before {
+      content: "◷";
+      font-size: 26px;
+    }
+
+    .tab-btn[data-tab="more"]::before {
+      content: "•••";
+      font-size: 22px;
+      letter-spacing: 1px;
+    }
 
     .filters {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 12px;
-      margin-bottom: 16px;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 8px;
+      background: #f8f8f8;
+      border-bottom: 1px solid #dedede;
     }
 
     .search {
-      min-height: 44px;
+      min-height: 34px;
       width: 100%;
-      padding: 0 14px;
-      border-radius: 8px;
-      border: 1px solid var(--line);
-      background: var(--panel-strong);
+      padding: 0 10px;
+      border-radius: 4px;
+      border: 1px solid #d6d6d6;
+      background: #fff;
       color: var(--ink);
       outline: none;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
     }
 
     .grid {
+      display: block;
+      padding: 0;
+    }
+
+    .grid.tile-mode {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+      gap: 8px;
+      padding: 8px;
     }
 
     .card,
     .form-panel,
     .empty,
     .toast {
-      border-radius: 8px;
-      background: var(--panel);
-      border: 1px solid rgba(255,255,255,.82);
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.86);
-      backdrop-filter: blur(16px);
+      background: var(--card);
     }
 
     .card {
-      padding: 16px;
-      display: grid;
-      gap: 12px;
+      min-height: 42px;
+      display: block;
+      align-items: stretch;
+      gap: 0;
+      padding: 0;
+      margin: 0;
+      border-radius: 0;
+      border-bottom: 1px solid #d8d8d8;
+    }
+
+    .grid.tile-mode .card {
+      min-height: 118px;
+      border: 1px solid #d7d7d7;
+      border-radius: 4px;
+      overflow: hidden;
     }
 
     .card-head {
+      min-width: 0;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 12px;
-      align-items: start;
+      grid-template-columns: minmax(0, 1fr) var(--metric-width);
+      align-items: center;
+      padding: 0 0 0 10px;
+      background: linear-gradient(#fff, #f8f8f8);
+    }
+
+    .grid.tile-mode .card-head {
+      height: 100%;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 42px;
+      align-items: stretch;
+      padding: 10px 0 0;
+    }
+
+    .card-head > div {
+      min-width: 0;
+      padding-right: 8px;
+    }
+
+    .grid.tile-mode .card-head > div {
+      padding: 0 10px;
+    }
+
+    .grid.tile-mode .switch {
+      width: 100%;
+      min-height: 42px;
+      grid-template-columns: 1fr 36px;
+    }
+
+    .grid.tile-mode .card h2 {
+      white-space: normal;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
 
     .card h2 {
       margin: 0;
-      font-size: 20px;
-      line-height: 1.25;
-      overflow-wrap: anywhere;
+      font-size: 17px;
+      line-height: 1.2;
+      font-weight: 400;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .date {
       color: var(--muted);
-      font-size: 14px;
-      margin-top: 4px;
+      font-size: 12px;
+      margin-top: 2px;
     }
 
     .switch {
-      min-width: 54px;
-      height: 30px;
-      padding: 3px;
-      border-radius: 999px;
-      background: #d5dde4;
-      border: 1px solid rgba(76, 92, 110, .12);
-      transition: background .18s ease;
+      width: var(--metric-width);
+      height: auto;
+      min-height: 42px;
+      padding: 0;
+      border-radius: 0;
+      display: grid;
+      grid-template-columns: 1fr 31px;
+      background: var(--blue);
+      color: #fff;
+      border-left: 1px solid #1974bb;
+      transition: none;
     }
 
     .switch span {
-      display: block;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 2px 8px rgba(31, 42, 56, .18);
-      transition: transform .18s ease;
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: var(--blue-deep);
+      box-shadow: none;
+      transition: none;
     }
 
-    .switch.on {
-      background: var(--accent);
+    .switch.metric-elapsed {
+      background: var(--orange);
+      border-left-color: var(--orange-deep);
     }
 
-    .switch.on span {
-      transform: translateX(24px);
+    .switch.metric-elapsed span {
+      background: var(--orange-deep);
     }
 
-    .stats {
+    .metric-number {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .stat {
-      padding: 12px;
-      border-radius: 8px;
-      background: rgba(255,255,255,.62);
-      border: 1px solid var(--line);
-    }
-
-    .stat small {
-      display: block;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .stat strong {
-      font-size: 24px;
+      place-items: center;
+      font-size: 20px;
+      font-weight: 800;
       line-height: 1;
+      color: #fff;
     }
 
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+    .metric-unit {
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      color: #fff;
     }
 
-    .tag {
-      min-height: 26px;
-      display: inline-flex;
+    .stats,
+    .tags,
+    .description,
+    .card-actions {
+      display: none;
+    }
+
+    .featured {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
-      padding: 0 10px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: #245d63;
-      font-size: 12px;
-      font-weight: 650;
+      gap: 12px;
+      min-height: 110px;
+      padding: 16px 14px;
+      background: #fff;
+      border-bottom: 1px solid #dadada;
+      box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .03);
     }
 
-    .tag.muted {
-      color: var(--muted);
-      background: rgba(255,255,255,.68);
-      border: 1px solid var(--line);
-    }
-
-    .description {
-      min-height: 22px;
-      color: var(--muted);
-      line-height: 1.6;
-      white-space: pre-wrap;
+    .featured-title {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.18;
+      font-weight: 500;
+      color: #333;
       overflow-wrap: anywhere;
     }
 
-    .card-actions {
-      display: flex;
-      gap: 8px;
+    .featured-date {
+      margin-top: 4px;
+      color: #777;
+      font-size: 15px;
     }
 
-    .card-actions .btn {
-      flex: 1;
+    .featured-value {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      min-width: 150px;
+      color: #333;
+    }
+
+    .featured-number {
+      font-size: 48px;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .featured-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 46px;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: var(--red);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
     }
 
     .empty {
-      padding: 34px 20px;
+      margin: 10px;
+      padding: 28px 18px;
+      border-radius: 6px;
       text-align: center;
       color: var(--muted);
+      border: 1px solid #ddd;
     }
 
     .empty h2 {
@@ -314,9 +456,8 @@
       z-index: 20;
       display: none;
       place-items: center;
-      padding: 22px;
-      background: rgba(34, 48, 64, .2);
-      backdrop-filter: blur(10px);
+      padding: 14px;
+      background: rgba(0, 0, 0, .32);
     }
 
     .form-wrap.open {
@@ -327,8 +468,9 @@
       width: min(640px, 100%);
       max-height: min(760px, calc(100svh - 44px));
       overflow: auto;
-      padding: 20px;
-      background: var(--panel-strong);
+      padding: 16px;
+      border-radius: 6px;
+      background: #fff;
     }
 
     .form-head {
@@ -392,14 +534,18 @@
       padding: 12px;
       border-radius: 8px;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,.7);
+      background: #fafafa;
     }
 
     .form-actions {
-      display: flex;
-      justify-content: flex-end;
+      display: grid;
+      grid-template-columns: auto 1fr 1fr;
       gap: 10px;
       margin-top: 18px;
+    }
+
+    #deleteInFormBtn[hidden] {
+      display: none;
     }
 
     .toast {
@@ -411,6 +557,8 @@
       width: min(520px, calc(100% - 32px));
       padding: 12px 14px;
       color: var(--ink);
+      border-radius: 6px;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, .18);
       opacity: 0;
       pointer-events: none;
       transition: opacity .18s ease, transform .18s ease;
@@ -421,19 +569,174 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    .drawer-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      background: rgba(0, 0, 0, .26);
+    }
+
+    .drawer-mask.open { display: block; }
+
+    .drawer {
+      position: fixed;
+      z-index: 31;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: min(320px, 82vw);
+      transform: translateX(-100%);
+      background: #fff;
+      box-shadow: 8px 0 24px rgba(0, 0, 0, .22);
+      transition: transform .2s ease;
+    }
+
+    .drawer.open {
+      left: max(0px, calc((100vw - min(100vw, var(--shell-max))) / 2));
+      transform: translateX(0);
+    }
+
+    .drawer-head {
+      min-height: 112px;
+      padding: 22px 18px;
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .drawer-head h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .drawer-head p {
+      margin: 8px 0 0;
+      color: rgba(255, 255, 255, .82);
+      font-size: 13px;
+    }
+
+    .drawer-actions {
+      display: grid;
+      gap: 1px;
+      background: #e6e6e6;
+    }
+
+    .drawer-action {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      background: #fff;
+      color: #333;
+      text-align: left;
+    }
+
+    .drawer-action small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .more-menu {
+      position: fixed;
+      z-index: 32;
+      right: max(14px, calc((100vw - min(100vw, var(--shell-max))) / 2 + 16px));
+      top: 112px;
+      width: min(220px, calc(100vw - 28px));
+      display: none;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .24);
+    }
+
+    .more-menu.open { display: block; }
+
+    .more-menu button {
+      width: 100%;
+      min-height: 44px;
+      display: block;
+      padding: 0 14px;
+      text-align: left;
+      color: #333;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+    }
+
+    .more-menu button:last-child {
+      border-bottom: 0;
+    }
+
     @media (max-width: 720px) {
-      .app { padding-inline: 14px; }
-      .topbar,
-      .filters,
-      .status-strip {
-        grid-template-columns: 1fr;
+      :root {
+        --metric-width: 96px;
       }
-      .toolbar { justify-content: stretch; }
-      .toolbar .btn,
-      .filters .btn { width: 100%; }
-      .field-row,
-      .stats {
-        grid-template-columns: 1fr;
+      .app { width: 100%; box-shadow: none; }
+      .field-row { grid-template-columns: 1fr; }
+    }
+
+    @media (min-width: 721px) {
+      .topbar {
+        height: 64px;
+        padding-inline: 22px;
+      }
+
+      .title h1 {
+        font-size: 22px;
+      }
+
+      .status-strip {
+        height: 58px;
+      }
+
+      .filters {
+        padding: 12px 16px;
+      }
+
+      .search {
+        min-height: 42px;
+        font-size: 17px;
+      }
+
+      .featured {
+        min-height: 132px;
+        padding: 24px 28px;
+      }
+
+      .featured-title {
+        font-size: 30px;
+      }
+
+      .featured-date {
+        font-size: 17px;
+      }
+
+      .featured-number {
+        font-size: 64px;
+      }
+
+      .card {
+        min-height: 52px;
+      }
+
+      .card-head {
+        padding-left: 18px;
+      }
+
+      .card h2 {
+        font-size: 20px;
+      }
+
+      .date {
+        font-size: 14px;
+      }
+
+      .switch {
+        min-height: 52px;
+      }
+
+      .metric-number {
+        font-size: 23px;
       }
     }
   </style>
@@ -441,19 +744,22 @@
 <body>
   <main class="app">
     <header class="topbar">
+      <button class="menu-icon" id="menuBtn" type="button" aria-label="菜单"><span></span></button>
       <div class="title">
-        <h1>纪念日管理</h1>
+        <h1>Days Matter · 倒数日</h1>
         <p>统一管理本地纪念日数据，页面会跟随插件数据变化自动刷新。</p>
       </div>
       <div class="toolbar">
-        <button class="btn" id="refreshBtn" type="button" title="刷新">↻ 刷新</button>
-        <button class="btn primary" id="createBtn" type="button" title="添加纪念日">＋ 添加</button>
+        <button class="top-icon" id="refreshBtn" type="button" title="切换视图" aria-label="切换视图">▦</button>
+        <button class="top-icon" id="createBtn" type="button" title="添加纪念日" aria-label="添加纪念日">＋</button>
       </div>
     </header>
 
     <section class="status-strip" aria-live="polite">
-      <div><span class="dot" id="bridgeDot"></span><strong id="bridgeMode">初始化中</strong> · <span id="syncText">等待数据</span></div>
-      <div id="todayText"></div>
+      <button class="tab-btn active" data-tab="all" type="button" title="全部"><span class="dot" id="bridgeDot"></span><strong id="bridgeMode">初始化中</strong><span id="syncText">等待数据</span></button>
+      <button class="tab-btn" data-tab="context" type="button" title="发送给 AI 上下文"><span id="todayText"></span></button>
+      <button class="tab-btn" data-tab="elapsed" type="button" title="已发生"></button>
+      <button class="tab-btn" data-tab="more" type="button" title="更多"></button>
     </section>
 
     <section class="filters">
@@ -461,8 +767,30 @@
       <button class="btn" id="clearSearchBtn" type="button">清空</button>
     </section>
 
+    <section id="featured"></section>
     <section class="grid" id="cards"></section>
   </main>
+
+  <div class="drawer-mask" id="drawerMask"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h2>Days Matter</h2>
+      <p id="drawerSummary">纪念日实时同步中</p>
+    </div>
+    <div class="drawer-actions">
+      <button class="drawer-action" type="button" data-menu-action="all"><span>全部纪念日</span><small id="allCount">0</small></button>
+      <button class="drawer-action" type="button" data-menu-action="context"><span>发送给 AI</span><small id="contextCount">0</small></button>
+      <button class="drawer-action" type="button" data-menu-action="elapsed"><span>已经发生</span><small id="elapsedCount">0</small></button>
+      <button class="drawer-action" type="button" data-menu-action="refresh"><span>立即刷新</span><small>Sync</small></button>
+    </div>
+  </aside>
+
+  <div class="more-menu" id="moreMenu">
+    <button type="button" data-more-action="all">显示全部</button>
+    <button type="button" data-more-action="context">只看上下文</button>
+    <button type="button" data-more-action="elapsed">只看已发生</button>
+    <button type="button" data-more-action="toggle-view">切换列表/宫格</button>
+  </div>
 
   <section class="form-wrap" id="formWrap" aria-hidden="true">
     <form class="form-panel" id="entryForm">
@@ -511,6 +839,7 @@
         </div>
       </div>
       <div class="form-actions">
+        <button class="btn danger" id="deleteInFormBtn" type="button">删除</button>
         <button class="btn" id="cancelBtn" type="button">取消</button>
         <button class="btn primary" id="saveBtn" type="submit">保存</button>
       </div>
@@ -529,7 +858,14 @@
       editingVersion: "",
       pollTimer: 0,
       bridgeMode: "mock",
-      busy: false
+      busy: false,
+      mutating: false,
+      refreshNonce: 0,
+      pendingRefresh: false,
+      activeTab: "all",
+      viewMode: "list",
+      drawerOpen: false,
+      moreOpen: false
     };
 
     const $ = (selector) => document.querySelector(selector);
@@ -807,7 +1143,12 @@
 
     function filteredItems() {
       const query = state.query.trim().toLowerCase();
-      const items = state.snapshot.items || [];
+      let items = state.snapshot.items || [];
+      if (state.activeTab === "context") {
+        items = items.filter(item => item.sendToContext);
+      } else if (state.activeTab === "elapsed") {
+        items = items.filter(item => Number(item.status?.daysSince || 0) >= 0);
+      }
       if (!query) return items;
       return items.filter(item => [
         item.title,
@@ -818,58 +1159,183 @@
       ].join(" ").toLowerCase().includes(query));
     }
 
+    function makeEl(tag, className, text) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    }
+
+    function makeButton(label, className, action, id, title) {
+      const button = makeEl("button", className, label);
+      button.type = "button";
+      if (action) button.dataset.action = action;
+      if (id) button.dataset.id = id;
+      if (title) button.title = title;
+      return button;
+    }
+
+    function applySnapshot(snapshot, statusText) {
+      state.snapshot = snapshot;
+      render();
+      setBridgeStatus(state.bridgeMode === "live" ? "live" : "mock", statusText);
+    }
+
+    function syncTopUi() {
+      document.querySelectorAll(".tab-btn").forEach(button => {
+        button.classList.toggle("active", button.dataset.tab === state.activeTab);
+      });
+      $("#refreshBtn").classList.toggle("active", state.viewMode === "tile");
+      $("#cards").classList.toggle("tile-mode", state.viewMode === "tile");
+      const items = state.snapshot.items || [];
+      const contextCount = items.filter(item => item.sendToContext).length;
+      const elapsedCount = items.filter(item => Number(item.status?.daysSince || 0) >= 0).length;
+      $("#allCount").textContent = String(items.length);
+      $("#contextCount").textContent = String(contextCount);
+      $("#elapsedCount").textContent = String(elapsedCount);
+      $("#drawerSummary").textContent = `${items.length} 个纪念日 · ${contextCount} 个发送给 AI`;
+    }
+
+    function setActiveTab(tab) {
+      if (tab === "more") {
+        toggleMoreMenu();
+        return;
+      }
+      state.activeTab = tab || "all";
+      state.moreOpen = false;
+      syncOverlays();
+      render();
+    }
+
+    function toggleViewMode() {
+      state.viewMode = state.viewMode === "tile" ? "list" : "tile";
+      render();
+    }
+
+    function syncOverlays() {
+      $("#drawer").classList.toggle("open", state.drawerOpen);
+      $("#drawer").setAttribute("aria-hidden", state.drawerOpen ? "false" : "true");
+      $("#drawerMask").classList.toggle("open", state.drawerOpen);
+      $("#moreMenu").classList.toggle("open", state.moreOpen);
+    }
+
+    function openDrawer() {
+      state.drawerOpen = true;
+      state.moreOpen = false;
+      syncOverlays();
+    }
+
+    function closeDrawer() {
+      state.drawerOpen = false;
+      syncOverlays();
+    }
+
+    function toggleMoreMenu() {
+      state.moreOpen = !state.moreOpen;
+      state.drawerOpen = false;
+      syncOverlays();
+    }
+
+    function metricForItem(item) {
+      const status = item.status || {};
+      const mode = item.mode || "both";
+      const elapsed = mode === "count_up";
+      if (elapsed) {
+        return {
+          value: Math.max(0, Number(status.daysSince || 0)),
+          unit: "天",
+          tone: "elapsed",
+          prefix: item.title + " 已经",
+          badge: "Days"
+        };
+      }
+      return {
+        value: Math.max(0, Number(status.daysUntilNext || 0)),
+        unit: "天",
+        tone: "upcoming",
+        prefix: "距离" + item.title + "还有",
+        badge: "Days"
+      };
+    }
+
+    function renderFeatured(items) {
+      const root = $("#featured");
+      root.replaceChildren();
+      if (!items.length) return;
+      const item = items[0];
+      const metric = metricForItem(item);
+      const section = makeEl("section", "featured");
+      section.dataset.action = "edit";
+      section.dataset.id = item.id;
+      const textBox = makeEl("div");
+      textBox.append(
+        makeEl("h2", "featured-title", metric.prefix),
+        makeEl("div", "featured-date", `目标日: ${item.date || ""}`)
+      );
+      const valueBox = makeEl("div", "featured-value");
+      valueBox.append(
+        makeEl("span", "featured-number", String(metric.value)),
+        makeEl("span", "featured-badge", metric.badge)
+      );
+      section.append(textBox, valueBox);
+      root.append(section);
+    }
+
+    function makeMetricButton(item) {
+      const metric = metricForItem(item);
+      const button = makeButton("", `switch metric-${metric.tone}`, "toggle", item.id, "上下文发送开关");
+      button.append(
+        makeEl("span", "metric-number", String(metric.value)),
+        makeEl("span", "metric-unit", metric.unit)
+      );
+      return button;
+    }
+
     function render() {
       $("#todayText").textContent = state.snapshot.today ? `今天 ${state.snapshot.today}` : "";
       const root = $("#cards");
       const items = filteredItems();
-      root.innerHTML = "";
+      renderFeatured(items);
+      root.replaceChildren();
+      syncTopUi();
       if (!items.length) {
-        root.innerHTML = `
-          <article class="empty">
-            <h2>${state.query ? "没有匹配结果" : "暂无纪念日"}</h2>
-            <p>${state.query ? "换个关键词试试看。" : "添加第一个纪念日后，这里会显示实时天数。"}</p>
-          </article>
-        `;
+        const empty = makeEl("article", "empty");
+        empty.append(
+          makeEl("h2", "", state.query ? "没有匹配结果" : "暂无纪念日"),
+          makeEl("p", "", state.query ? "换个关键词试试看。" : "添加第一个纪念日后，这里会显示实时天数。")
+        );
+        root.append(empty);
         return;
       }
       for (const item of items) {
-        const status = item.status || {};
-        const card = document.createElement("article");
-        card.className = "card";
-        card.innerHTML = `
-          <div class="card-head">
-            <div>
-              <h2>${escapeHtml(item.title)}</h2>
-              <div class="date">${escapeHtml(item.date)} · 下次 ${escapeHtml(status.nextDate || "")}</div>
-            </div>
-            <button class="switch ${item.sendToContext ? "on" : ""}" type="button" data-action="toggle" data-id="${escapeHtml(item.id)}" title="上下文发送开关"><span></span></button>
-          </div>
-          <div class="stats">
-            <div class="stat"><small>已过去</small><strong>${Number(status.daysSince || 0)}</strong> 天</div>
-            <div class="stat"><small>距下次</small><strong>${Number(status.daysUntilNext || 0)}</strong> 天</div>
-          </div>
-          <div class="tags">
-            <span class="tag">${escapeHtml(ownerText(item.owner))}</span>
-            <span class="tag">${escapeHtml(modeText(item.mode))}</span>
-            <span class="tag ${item.sendToContext ? "" : "muted"}">${item.sendToContext ? "发送上下文" : "不发送上下文"}</span>
-            ${status.isToday ? '<span class="tag">今天</span>' : ""}
-          </div>
-          <div class="description">${escapeHtml(item.description || "没有备注")}</div>
-          <div class="card-actions">
-            <button class="btn" type="button" data-action="edit" data-id="${escapeHtml(item.id)}">编辑</button>
-            <button class="btn danger" type="button" data-action="delete" data-id="${escapeHtml(item.id)}">删除</button>
-          </div>
-        `;
+        const metric = metricForItem(item);
+        const card = makeEl("article", "card");
+        card.dataset.action = "edit";
+        card.dataset.id = item.id;
+        const head = makeEl("div", "card-head");
+        const titleBox = makeEl("div");
+        titleBox.append(
+          makeEl("h2", "", metric.prefix),
+          makeEl("div", "date", `目标日: ${item.date || ""}`)
+        );
+        const switchButton = makeMetricButton(item);
+        head.append(titleBox, switchButton);
+        card.append(head);
         root.append(card);
       }
     }
 
     async function refresh(forceRender = false) {
-      if (state.busy) return;
+      if (state.busy || state.mutating) {
+        if (forceRender) state.pendingRefresh = true;
+        return;
+      }
       state.busy = true;
+      const refreshToken = ++state.refreshNonce;
       try {
         const result = await invoke("list_snapshot", {});
         if (!result.success) throw new Error(result.error?.message || "读取失败");
+        if (refreshToken !== state.refreshNonce || state.mutating) return;
         const changed = result.version !== state.snapshot.version;
         state.snapshot = result;
         setBridgeStatus(state.bridgeMode === "live" ? "live" : "mock", changed ? "已同步最新数据" : "数据无变化");
@@ -878,6 +1344,10 @@
         setBridgeStatus("error", error.message || "同步失败");
       } finally {
         state.busy = false;
+        if (state.pendingRefresh && !state.mutating) {
+          state.pendingRefresh = false;
+          setTimeout(() => refresh(true), 0);
+        }
       }
     }
 
@@ -891,6 +1361,7 @@
       $("#modeInput").value = item?.mode || "both";
       $("#descriptionInput").value = item?.description || "";
       $("#sendInput").checked = item?.sendToContext === true;
+      $("#deleteInFormBtn").hidden = !item;
       $("#formWrap").classList.add("open");
       $("#formWrap").setAttribute("aria-hidden", "false");
       $("#titleInput").focus();
@@ -900,6 +1371,7 @@
       $("#formWrap").classList.remove("open");
       $("#formWrap").setAttribute("aria-hidden", "true");
       $("#entryForm").reset();
+      $("#deleteInFormBtn").hidden = true;
       state.editingVersion = "";
     }
 
@@ -922,56 +1394,99 @@
       if (!payload.title) return toast("请填写名称");
       if (!isValidYMD(payload.date)) return toast("日期格式无效，请使用 YYYY-MM-DD");
       const action = payload.id ? "update" : "create";
-      const result = await invoke(action, payload);
-      if (!result.success) {
-        toast(result.error?.message || "保存失败");
-        await refresh(true);
-        return;
+      state.mutating = true;
+      state.refreshNonce++;
+      try {
+        const result = await invoke(action, payload);
+        if (!result.success) {
+          toast(result.error?.message || "保存失败");
+          if (result.error?.currentVersion) state.snapshot.version = result.error.currentVersion;
+          return;
+        }
+        closeForm();
+        if (result.snapshot) applySnapshot(result.snapshot, "保存完成");
+      } finally {
+        state.mutating = false;
+        state.refreshNonce++;
+        refresh(true);
       }
-      closeForm();
-      if (result.snapshot) state.snapshot = result.snapshot;
-      render();
-      setBridgeStatus(state.bridgeMode === "live" ? "live" : "mock", "保存完成");
+    }
+
+    async function deleteCurrentEntry() {
+      const id = $("#entryId").value;
+      if (!id) return;
+      const item = (state.snapshot.items || []).find(entry => entry.id === id);
+      if (!item) return;
+      if (!confirm(`确定删除「${item.title}」？`)) return;
+      state.mutating = true;
+      state.refreshNonce++;
+      try {
+        const result = await invoke("delete", { id, expectedVersion: state.editingVersion || state.snapshot.version });
+        if (!result.success) {
+          toast(result.error?.message || "删除失败");
+          if (result.error?.currentVersion) state.snapshot.version = result.error.currentVersion;
+          return;
+        }
+        closeForm();
+        if (result.snapshot) applySnapshot(result.snapshot, "删除完成");
+      } finally {
+        state.mutating = false;
+        state.refreshNonce++;
+        refresh(true);
+      }
     }
 
     async function handleCardClick(event) {
       const button = event.target.closest("button[data-action]");
-      if (!button) return;
-      const id = button.dataset.id;
+      const target = button || event.target.closest("[data-action]");
+      if (!target) return;
+      const id = target.dataset.id;
       const item = (state.snapshot.items || []).find(entry => entry.id === id);
       if (!item) return;
-      const action = button.dataset.action;
+      const action = target.dataset.action;
       if (action === "edit") {
         openForm(item);
         return;
       }
       if (action === "delete") {
         if (!confirm(`确定删除「${item.title}」？`)) return;
-        const result = await invoke("delete", { id, expectedVersion: state.snapshot.version });
-        if (!result.success) {
-          toast(result.error?.message || "删除失败");
-          await refresh(true);
-          return;
+        state.mutating = true;
+        state.refreshNonce++;
+        try {
+          const result = await invoke("delete", { id, expectedVersion: state.snapshot.version });
+          if (!result.success) {
+            toast(result.error?.message || "删除失败");
+            if (result.error?.currentVersion) state.snapshot.version = result.error.currentVersion;
+            return;
+          }
+          if (result.snapshot) applySnapshot(result.snapshot, "删除完成");
+        } finally {
+          state.mutating = false;
+          state.refreshNonce++;
+          refresh(true);
         }
-        if (result.snapshot) state.snapshot = result.snapshot;
-        render();
-        setBridgeStatus(state.bridgeMode === "live" ? "live" : "mock", "删除完成");
         return;
       }
       if (action === "toggle") {
-        const result = await invoke("toggle_context", {
-          id,
-          enabled: !item.sendToContext,
-          expectedVersion: state.snapshot.version
-        });
-        if (!result.success) {
-          toast(result.error?.message || "切换失败");
-          await refresh(true);
-          return;
+        state.mutating = true;
+        state.refreshNonce++;
+        try {
+          const result = await invoke("toggle_context", {
+            id,
+            enabled: !item.sendToContext,
+            expectedVersion: state.snapshot.version
+          });
+          if (!result.success) {
+            toast(result.error?.message || "切换失败");
+            if (result.error?.currentVersion) state.snapshot.version = result.error.currentVersion;
+            return;
+          }
+          if (result.snapshot) applySnapshot(result.snapshot, "开关已更新");
+        } finally {
+          state.mutating = false;
+          state.refreshNonce++;
+          refresh(true);
         }
-        if (result.snapshot) state.snapshot = result.snapshot;
-        render();
-        setBridgeStatus(state.bridgeMode === "live" ? "live" : "mock", "开关已更新");
       }
     }
 
@@ -983,11 +1498,48 @@
     }
 
     $("#createBtn").addEventListener("click", () => openForm(null));
-    $("#refreshBtn").addEventListener("click", () => refresh(true));
+    $("#refreshBtn").addEventListener("click", toggleViewMode);
+    $("#menuBtn").addEventListener("click", openDrawer);
+    $("#drawerMask").addEventListener("click", closeDrawer);
     $("#closeFormBtn").addEventListener("click", closeForm);
     $("#cancelBtn").addEventListener("click", closeForm);
+    $("#deleteInFormBtn").addEventListener("click", deleteCurrentEntry);
     $("#entryForm").addEventListener("submit", saveForm);
     $("#cards").addEventListener("click", handleCardClick);
+    $("#featured").addEventListener("click", handleCardClick);
+    document.querySelectorAll(".tab-btn").forEach(button => {
+      button.addEventListener("click", () => setActiveTab(button.dataset.tab));
+    });
+    $("#drawer").addEventListener("click", event => {
+      const actionButton = event.target.closest("[data-menu-action]");
+      if (!actionButton) return;
+      const action = actionButton.dataset.menuAction;
+      if (action === "refresh") {
+        closeDrawer();
+        refresh(true);
+        return;
+      }
+      closeDrawer();
+      setActiveTab(action);
+    });
+    $("#moreMenu").addEventListener("click", event => {
+      const button = event.target.closest("[data-more-action]");
+      if (!button) return;
+      const action = button.dataset.moreAction;
+      if (action === "toggle-view") {
+        state.moreOpen = false;
+        syncOverlays();
+        toggleViewMode();
+        return;
+      }
+      setActiveTab(action);
+    });
+    document.addEventListener("click", event => {
+      if (!state.moreOpen) return;
+      if (event.target.closest("#moreMenu") || event.target.closest('.tab-btn[data-tab="more"]')) return;
+      state.moreOpen = false;
+      syncOverlays();
+    });
     $("#searchInput").addEventListener("input", event => {
       state.query = event.target.value;
       render();
