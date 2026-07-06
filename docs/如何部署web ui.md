@@ -173,6 +173,7 @@ com.operit.anniversary-1.1.0.toolpkg
 
 - 更适合 Operit 内正式使用。
 - 使用 `native_ui/dist/main.js` 注册原生入口。
+- 支持 `sidebar` 导航面的 Operit 版本会在侧边栏显示「纪念日」入口；旧版本仍保留工具箱里的「纪念日管理」入口。
 - 支持 `ToolPkg.registerUiRoute` 和 `compose_dsl` 的 Operit 版本可直接打开。
 
 ### Web UI
@@ -223,4 +224,3 @@ node simple_web_ui/_selftest.js
 com.operit.anniversary-1.1.0.toolpkg
 simple_web_ui_2/operit-daysmatter-shell.zip
 ```
-

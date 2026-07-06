@@ -21,6 +21,19 @@ var ANNIVERSARY_ROUTE = "toolpkg:com.operit.anniversary:ui:anniversary_manager";
 // 系统提示词钩子（与单文件基础版逻辑一致，复用 service 层）
 var systemPromptHook = service.systemPromptHook;
 
+function registerNavigationEntrySafely(entry) {
+    try {
+        ToolPkg.registerNavigationEntry(entry);
+        return true;
+    }
+    catch (error) {
+        if (typeof console !== "undefined" && console.warn) {
+            console.warn("[Anniversary] navigation entry skipped:", entry && entry.id, error);
+        }
+        return false;
+    }
+}
+
 function registerToolPkg() {
     // 确保存储目录与数据文件存在
     void storage.ensureDataFile().catch(function () { });
@@ -39,8 +52,21 @@ function registerToolPkg() {
         }
     });
 
-    // 注册工具箱导航入口（在 Operit 工具箱中显示入口图标）
-    ToolPkg.registerNavigationEntry({
+    // 注册侧边栏入口（支持 sidebar surface 的 Operit 版本会直接显示）
+    registerNavigationEntrySafely({
+        id: "anniversary_manager_sidebar",
+        route: ANNIVERSARY_ROUTE,
+        surface: "sidebar",
+        title: {
+            zh: "纪念日",
+            en: "Anniversary"
+        },
+        icon: navigationIcon,
+        order: 220
+    });
+
+    // 注册工具箱导航入口（保留旧版本 Operit 的可见入口）
+    registerNavigationEntrySafely({
         id: "anniversary_manager_toolbox",
         route: ANNIVERSARY_ROUTE,
         surface: "toolbox",

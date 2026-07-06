@@ -337,7 +337,7 @@ node _selftest.js
 | -------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | 技术形态 | 单文件 JS + `/* METADATA */` + `exports`                        | 多文件包：`manifest.json` + `dist/` 目录 + `registerToolPkg()`                |
 | 兼容性   | 最大兼容，任何支持脚本工具包的 Operit 版本均可使用              | 需要支持 `ToolPkg.registerUiRoute` / `compose_dsl` 的较新版本                 |
-| 用户界面 | 无 UI，纯 AI 对话工具调用                                       | Operit 应用内原生 UI 页面（列表 / 表单 / 开关）                               |
+| 用户界面 | 无 UI，纯 AI 对话工具调用                                       | Operit 应用内原生 UI 页面（列表 / 表单 / 开关），支持侧边栏入口并保留工具箱入口 |
 | 数据共享 | —                                                               | **与基础版共享同一份数据文件**（`ToolPkg.getConfigDir()/anniversaries.json`） |
 | AI 工具  | 6 个工具（add / list / status / toggle / context / delete）     | 相同 6 个工具（子包 `anniversary_tools`）                                     |
 | 自动注入 | `exports.systemPromptHook`                                      | `ToolPkg.registerSystemPromptComposeHook`                                     |
@@ -367,7 +367,7 @@ native_ui/
 ┌─────────────────────────────────────────────────┐
 │  main.js (registerToolPkg)                      │
 │  ├── registerUiRoute → index.ui.js (compose_dsl)│
-│  ├── registerNavigationEntry → 工具箱入口        │
+│  ├── registerNavigationEntry → 侧边栏入口 + 工具箱入口 │
 │  └── registerSystemPromptComposeHook → 钩子      │
 ├─────────────────────────────────────────────────┤
 │  packages/anniversary_tools.js (AI 工具)         │
@@ -400,7 +400,7 @@ native_ui/
 
 ### 安装方式
 
-将整个 [`native_ui/`](native_ui/manifest.json:1) 目录作为工具包导入 Operit（支持 `manifest.json` 多文件包格式的版本）。导入后在工具箱中会出现「纪念日管理」入口，点击即可打开原生管理界面。
+将整个 [`native_ui/`](native_ui/manifest.json:1) 目录作为工具包导入 Operit（支持 `manifest.json` 多文件包格式的版本）。导入后，支持 `sidebar` 导航面的 Operit 版本会在侧边栏出现「纪念日」入口；旧版本仍会在工具箱中显示「纪念日管理」入口，点击即可打开原生管理界面。
 
 ### 自测
 
