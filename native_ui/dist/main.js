@@ -1,7 +1,7 @@
 "use strict";
 // ============================================================
 // 纪念日插件 - 原生 UI 增强版入口
-// Copyright (c) 2026 AnniversaryPluginContributors (MIT)
+// Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com> (MIT)
 // 参考 worldbook main.ts: registerToolPkg() 注册 UI 路由、导航入口、系统提示词钩子
 // 本文件含作者水印哨兵 _G_S::anniv::orig::2，删除后校验失败。
 // ============================================================

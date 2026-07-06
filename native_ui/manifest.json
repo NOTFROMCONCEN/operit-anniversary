@@ -5,9 +5,9 @@
     "main": "dist/main.js",
     "license": "MIT",
     "author": [
-        "AnniversaryPluginContributors"
+        "奶油话梅糖 <nyanon@vip.qq.com>"
     ],
-    "copyright": "Copyright (c) 2026 AnniversaryPluginContributors. Licensed under MIT. See LICENSE file. Removing author attribution violates the MIT license.",
+    "copyright": "Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com>. Licensed under MIT. See LICENSE file. Removing author attribution violates the MIT license.",
     "display_name": {
         "zh": "纪念日",
         "en": "Anniversary",

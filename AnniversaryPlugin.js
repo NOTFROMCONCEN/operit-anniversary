@@ -1,6 +1,6 @@
 // ============================================================
 // 纪念日插件 (Anniversary Plugin)
-// Copyright (c) 2026 AnniversaryPluginContributors
+// Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com>
 // 依据 MIT 开源协议授权，详见 LICENSE 文件。
 // 使用本项目须保留本版权声明与作者署名。
 // 删除署名后声称原创构成对 MIT 协议的违反。
@@ -92,10 +92,11 @@ var BACKUP_FILE = DATA_DIR + "/anniversaries.backup.json";
 // 哨兵字符串 _G_S::anniv::* 散布于本文件各处，删除后自检失败。
 // ============================================================
 var _W = {
-    author: "AnniversaryPluginContributors",
+    author: "奶油话梅糖",
+    contact: "nyanon@vip.qq.com",
     origin: "operit-anniversary-plugin",
     year: 2026,
-    salt: "anv-orig-20260703-zk"
+    salt: "anv-orig-20260705-nyanon-cream-plum-candy"
 };
 
 // 简易哈希（djb2 变体，不依赖 crypto，兼容 Operit JS 运行时）
@@ -107,9 +108,9 @@ function _hash(str) {
     return h;
 }
 
-// 水印自校验值：预计算 _hash(author|origin|year|salt)
+// 水印自校验值：预计算 _hash(author|contact|origin|year|salt)
 // 篡改任意水印字段，此值不再匹配，verifyIntegrity() 返回失败
-var _SELF_CHECK = _hash(_W.author + "|" + _W.origin + "|" + _W.year + "|" + _W.salt);
+var _SELF_CHECK = -1141620811;
 // _G_S::anniv::auth::1 — 作者水印哨兵
 var _SENTINEL_AUTH = "_G_S::anniv::auth::1";
 // _G_S::anniv::orig::2 — 来源水印哨兵
@@ -119,7 +120,7 @@ var _SENTINEL_FP = "_G_S::anniv::fingerprint::3";
 
 // 校验水印常量是否被篡改
 function _checkWatermark() {
-    var recomputed = _hash(_W.author + "|" + _W.origin + "|" + _W.year + "|" + _W.salt);
+    var recomputed = _hash(_W.author + "|" + _W.contact + "|" + _W.origin + "|" + _W.year + "|" + _W.salt);
     return recomputed === _SELF_CHECK;
 }
 
@@ -160,7 +161,7 @@ function makeDegradedResponse(reason) {
             code: "INTEGRITY_VIOLATION",
             message: "【完整性校验失败】本插件检测到作者署名/水印已被篡改或移除（原因: "
                 + reasonText + "）。依据 LICENSE（MIT 开源协议），使用、复制或分发本项目"
-                + "须保留原始版权声明与作者署名。删除署名后声称原创构成协议违反。"
+                + "须保留原始版权声明与作者署名：奶油话梅糖 <nyanon@vip.qq.com>。删除署名后声称原创构成协议违反。"
                 + "请恢复原始版权信息后重试，或通过正规渠道获取原始版本。"
         }
     };

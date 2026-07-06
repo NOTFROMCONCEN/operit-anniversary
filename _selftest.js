@@ -1,3 +1,4 @@
+// Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com> (MIT)
 // 纯 Node.js 自测脚本：mock Operit 宿主环境，验证日期计算与工具逻辑
 // 用法: node _selftest.js
 var Tools = { Files: {} };

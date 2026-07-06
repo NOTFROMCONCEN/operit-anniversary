@@ -13,14 +13,15 @@
 // ============================================================
 
 // ---- 功能性水印常量 ----
-// 这些常量并非装饰：_W.author / _W.salt 参与数据指纹计算，
-// _W.selfCheck 是 _W.author + _W.origin + _W.year + _W.salt 的哈希校验值。
+// 这些常量并非装饰：_W.author / _W.contact / _W.salt 参与数据指纹计算，
+// _W.selfCheck 是 _W.author + _W.contact + _W.origin + _W.year + _W.salt 的哈希校验值。
 // 篡改任意一个水印字段，自校验即失败，触发功能降级。
 var _W = {
-    author: "AnniversaryPluginContributors",
+    author: "奶油话梅糖",
+    contact: "nyanon@vip.qq.com",
     origin: "operit-anniversary-plugin",
     year: 2026,
-    salt: "anv-orig-20260703-zk"
+    salt: "anv-orig-20260705-nyanon-cream-plum-candy"
 };
 
 // ---- 简易哈希（djb2 变体，不依赖 crypto，兼容 Operit JS 运行时）----
@@ -33,9 +34,9 @@ function _hash(str) {
 }
 
 // ---- 水印自校验值 ----
-// 预计算 _hash(_W.author + "|" + _W.origin + "|" + _W.year + "|" + _W.salt)
+// 预计算 _hash(_W.author + "|" + _W.contact + "|" + _W.origin + "|" + _W.year + "|" + _W.salt)
 // 若水印被篡改，此值将不再匹配，verifyIntegrity() 返回失败。
-var _SELF_CHECK = _hash(_W.author + "|" + _W.origin + "|" + _W.year + "|" + _W.salt);
+var _SELF_CHECK = -1141620811;
 
 // ---- 校验水印指纹完整性的哨兵字符串 ----
 // 此字符串散布于 service 层与 tools 层，verifyIntegrity 会检测它们是否存在。
@@ -52,7 +53,7 @@ var _SENTINELS = [
 
 // 校验水印常量是否被篡改（核心自检）
 function _checkWatermark() {
-    var recomputed = _hash(_W.author + "|" + _W.origin + "|" + _W.year + "|" + _W.salt);
+    var recomputed = _hash(_W.author + "|" + _W.contact + "|" + _W.origin + "|" + _W.year + "|" + _W.salt);
     return recomputed === _SELF_CHECK;
 }
 
@@ -138,7 +139,7 @@ function makeDegradedResponse(reason) {
             code: "INTEGRITY_VIOLATION",
             message: "【完整性校验失败】本插件检测到作者署名/水印已被篡改或移除（原因: "
                 + reasonText + "）。依据 LICENSE（MIT 开源协议），使用、复制或分发本项目"
-                + "须保留原始版权声明与作者署名。删除署名后声称原创构成协议违反。"
+                + "须保留原始版权声明与作者署名：奶油话梅糖 <nyanon@vip.qq.com>。删除署名后声称原创构成协议违反。"
                 + "请恢复原始版权信息后重试，或通过正规渠道获取原始版本。"
         }
     };

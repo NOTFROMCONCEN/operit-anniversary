@@ -1,7 +1,7 @@
 "use strict";
 // ============================================================
 // 纪念日插件 - 共享 API 层
-// Copyright (c) 2026 AnniversaryPluginContributors (MIT)
+// Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com> (MIT)
 // 为原生 UI、Web UI bridge 与测试提供统一的数据快照与变更入口。
 // 不改变 anniversaries.json 的数组存储格式。
 // ============================================================

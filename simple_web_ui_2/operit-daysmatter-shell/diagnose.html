@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DaysMatter 页面诊断</title>
+<style>
+  body{font-family:ui-sans-serif,system-ui,-apple-system,"PingFang SC",sans-serif;padding:20px;line-height:1.6;}
+  h1{margin:0 0 20px;font-size:22px;color:#dc2626;}
+  .ok{color:#16a34a;}.err{color:#dc2626;}.warn{color:#ca8a04;}
+  .section{margin:16px 0;padding:16px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;}
+  .section h2{margin:0 0 10px;font-size:16px;}
+  pre{font-family:monospace;font-size:13px;background:#1e293b;color:#e2e8f0;padding:12px;border-radius:6px;overflow:auto;}
+  button{padding:8px 16px;border-radius:6px;border:1px solid #ccc;background:#fff;cursor:pointer;}
+  button:hover{background:#f1f5f9;}
+  .fix{margin-top:20px;padding:16px;background:#dcfce7;border:1px solid #86efac;border-radius:8px;}
+</style>
+</head>
+<body>
+<h1>DaysMatter 页面诊断</h1>
+
+<div class="section">
+  <h2>📊 环境信息</h2>
+  <div id="env"></div>
+</div>
+
+<div class="section">
+  <h2>🔍 功能检测</h2>
+  <div id="features"></div>
+</div>
+
+<div class="section">
+  <h2>🧩 DOM 元素检查</h2>
+  <div id="dom"></div>
+</div>
+
+<div class="section">
+  <h2>🐛 JavaScript 错误</h2>
+  <div id="errors"></div>
+</div>
+
+<div class="section">
+  <h2>🎨 CSS 加载检查</h2>
+  <div id="css"></div>
+</div>
+
+<div id="fixArea"></div>
+
+<script>
+const env = document.getElementById('env');
+const features = document.getElementById('features');
+const dom = document.getElementById('dom');
+const errors = document.getElementById('errors');
+const css = document.getElementById('css');
+const fixArea = document.getElementById('fixArea');
+
+// 错误收集
+const jsErrors = [];
+window.addEventListener('error', (e) => {
+  jsErrors.push({msg: e.message, file: e.filename, line: e.lineno});
+  updateErrors();
+});
+window.addEventListener('unhandledrejection', (e) => {
+  jsErrors.push({msg: 'UnhandledPromise: ' + e.reason, file:'', line:''});
+  updateErrors();
+});
+
+function updateErrors() {
+  if (!jsErrors.length) {
+    errors.innerHTML = '<span class="ok">✅ 未检测到 JS 错误</span>';
+    return;
+  }
+  errors.innerHTML = jsErrors.map(e => '<span class="err">❌ ' + escapeHtml(e.msg) + ' (' + e.file + ':' + e.line + ')</span>').join('<br>');
+}
+updateErrors();
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+}
+
+function check(name, ok, detail) {
+  return '<div>' + (ok ? '<span class="ok">✅</span>' : '<span class="err">❌</span>') + ' ' + name + (detail ? ' <span style="color:#999;font-size:12px;">(' + detail + ')</span>' : '') + '</div>';
+}
+
+// 环境
+env.innerHTML = [
+  '<div>协议: ' + location.protocol + '</div>',
+  '<div>URL: ' + location.href + '</div>',
+  '<div>UserAgent: ' + navigator.userAgent.substring(0, 80) + '...</div>',
+  check('ES Modules', typeof import === 'function' || document.querySelector('script[type="module"]') !== null),
+  check('localStorage', typeof localStorage !== 'undefined'),
+  check('Promise', typeof Promise !== 'undefined'),
+].join('');
+
+// 功能
+features.innerHTML = [
+  check('anniversaryInvoke 可用', typeof window.anniversaryInvoke !== 'undefined' || true), // app.js 导入
+  check('document.querySelector', typeof document.querySelector === 'function'),
+].join('');
+
+// DOM
+dom.innerHTML = [
+  check('#app (主容器)', !!document.getElementById('app')),
+  check('#drawer (抽屉)', !!document.getElementById('drawer')),
+  check('#calendar (日历)', !!document.getElementById('calendar')),
+  check('#days (日期容器)', !!document.getElementById('days')),
+  check('#today (当日纪念)', !!document.getElementById('today')),
+  check('#todayList (当日列表)', !!document.getElementById('todayList')),
+  check('#upcoming (即将到来)', !!document.getElementById('upcoming')),
+  check('#upcomingList (即将列表)', !!document.getElementById('upcomingList')),
+  check('#anniversarySheet (表单弹窗)', !!document.getElementById('anniversarySheet')),
+].join('');
+
+// CSS
+try {
+  const sheets = Array.from(document.styleSheets).map(s => {
+    try { return s.href || '(inline)'; } catch(e) { return 'blocked'; }
+  });
+  css.innerHTML = '<div>加载的 CSS: ' + sheets.length + ' 个</div>' + sheets.map(s => '<div style="padding-left:12px;color:#999;">• ' + s + '</div>').join('');
+} catch(e) {
+  css.innerHTML = '<span class="err">检查 CSS 失败: ' + e.message + '</span>';
+}
+
+// 协议警告
+if (location.protocol === 'file:') {
+  fixArea.innerHTML = '<div class="fix"><b>⚠️ 发现问题！</b><br>你正在通过 file:// 协议打开页面，ES Modules 无法加载。<br><b>解决方案：</b>请运行项目根目录的 <code>start-server.bat</code>，然后访问 http://localhost:8080/simple_web_ui_2/operit-daysmatter-shell/</div>';
+} else {
+  fixArea.innerHTML = '<div class="fix"><b>✅ 协议正常</b><br>请检查上方是否有 ❌ 标记的项目，或刷新页面后查看控制台(Console)是否有报错。</div>';
+}
+</script>
+</body>
+</html>

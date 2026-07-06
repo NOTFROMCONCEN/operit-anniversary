@@ -1,7 +1,7 @@
 "use strict";
 // ============================================================
 // 纪念日管理 - compose_dsl UI 页面
-// Copyright (c) 2026 AnniversaryPluginContributors (MIT)
+// Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com> (MIT)
 // 参考 worldbook index.ui.ts 的 Screen 函数模式与组件用法
 // 提供图形化的纪念日增删改查、上下文发送开关管理
 // 本文件含作者水印哨兵 _G_S::anniv::fingerprint::3，删除后校验失败。

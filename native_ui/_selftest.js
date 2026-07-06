@@ -1,3 +1,4 @@
+// Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com> (MIT)
 // 纯 Node.js 自测脚本：验证 native_ui 版的 service 层与工具子包
 // mock Operit 宿主环境，验证日期计算、CRUD、systemPromptHook 逻辑
 // 用法: node native_ui/_selftest.js

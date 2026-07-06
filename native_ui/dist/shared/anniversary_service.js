@@ -1,7 +1,7 @@
 "use strict";
 // ============================================================
 // 纪念日插件 - Service 层
-// Copyright (c) 2026 AnniversaryPluginContributors (MIT)
+// Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com> (MIT)
 // 包含日期计算（含闰年 2-29 支持）和 CRUD 操作。
 // 逻辑与单文件基础版 AnniversaryPlugin.js 完全一致，
 // 确保两个版本行为一致、数据兼容。

@@ -1,7 +1,7 @@
 "use strict";
 // ============================================================
 // 纪念日插件 - 存储层
-// Copyright (c) 2026 AnniversaryPluginContributors (MIT)
+// Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com> (MIT)
 // 与单文件基础版 AnniversaryPlugin.js 共享同一份数据文件，
 // 使用 ToolPkg.getConfigDir() 获取插件私有配置目录。
 // 本文件含作者水印哨兵 _G_S::anniv::auth::1，删除后校验失败。

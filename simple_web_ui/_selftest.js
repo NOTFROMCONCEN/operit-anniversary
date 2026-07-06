@@ -1,4 +1,5 @@
 "use strict";
+// Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com> (MIT)
 // 静态 Web UI 结构自测：验证实时 bridge、mock fallback 与轮询入口存在。
 // 用法: node simple_web_ui/_selftest.js
 

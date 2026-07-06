@@ -1,0 +1,124 @@
+<!doctype html>
+<!-- DaysMatter provenance: original author 奶油话梅糖 <nyanon@vip.qq.com> -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="author" content="奶油话梅糖" />
+  <meta name="copyright" content="Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com>" />
+  <meta name="x-origin-watermark" content="daysmatter:nyanon@vip.qq.com:2026" />
+  <title>全部纪念 · DaysMatter</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body data-origin-author="奶油话梅糖" data-origin-contact="nyanon@vip.qq.com" data-origin-watermark="daysmatter-2026-nyanon">
+  <main class="phone-shell" id="app">
+    <header class="topbar">
+      <a class="back" href="./index.html" aria-label="返回">←</a>
+      <div class="brand">全部纪念</div>
+      <button class="sort-btn" id="batchToggleBtn" aria-label="批量管理">☰</button>
+      <button class="sort-btn" id="sortBtn" aria-label="切换排序">⇅</button>
+    </header>
+
+    <section class="hero compact">
+      <h1>All Days</h1>
+      <p class="count-summary" id="countSummary">还没有纪念记录</p>
+    </section>
+
+    <section class="glass-card section-card">
+      <div class="search-bar">
+        <input id="searchInput" type="text" placeholder="搜索名称、日期或备注" />
+      </div>
+      <div class="filter-bar" id="filterBar">
+        <select id="filterOwner">
+          <option value="">全部归属</option>
+          <option value="user">用户</option>
+          <option value="assistant">AI</option>
+          <option value="shared">共同</option>
+        </select>
+        <select id="filterRepeat">
+          <option value="">全部重复</option>
+          <option value="yearly">每年</option>
+          <option value="monthly">每月</option>
+          <option value="once">仅一次</option>
+        </select>
+        <select id="filterPinned">
+          <option value="">全部</option>
+          <option value="pinned">已置顶</option>
+        </select>
+      </div>
+      <div class="batch-bar" id="batchBar" style="display:none;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+        <button class="soft-btn" id="batchDeleteBtn" type="button">批量删除</button>
+        <button class="soft-btn" id="batchCancelBtn" type="button">取消</button>
+      </div>
+      <div class="anniversary-list" id="allList"></div>
+    </section>
+
+    <footer class="author-watermark">
+      Copyright © 2026 奶油话梅糖 · nyanon@vip.qq.com
+    </footer>
+  </main>
+
+  <button class="fab" id="addAnniversary" aria-label="新建纪念">＋</button>
+
+  <dialog class="sheet" id="anniversarySheet">
+    <form method="dialog" class="sheet-card">
+      <div class="sheet-handle"></div>
+      <header>
+        <div>
+          <p id="sheetType">新建纪念</p>
+          <h3 id="sheetTitle">记录一个日子</h3>
+        </div>
+        <button class="icon-button close" value="cancel" aria-label="关闭">×</button>
+      </header>
+      <div class="sheet-body">
+        <label class="field">
+          <span>名称</span>
+          <input id="inputTitle" type="text" placeholder="例如：第一次见面" required />
+        </label>
+        <label class="field">
+          <span>日期</span>
+          <input id="inputDate" type="date" required />
+        </label>
+        <label class="field">
+          <span>备注</span>
+          <textarea id="inputDescription" rows="3" placeholder="写下这一天值得记住的原因"></textarea>
+        </label>
+        <label class="field">
+          <span>归属</span>
+          <select id="inputOwner">
+            <option value="user">用户</option>
+            <option value="assistant">AI</option>
+            <option value="shared">共同</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>计数模式</span>
+          <select id="inputMode">
+            <option value="both">双向</option>
+            <option value="count_up">已过天数</option>
+            <option value="count_down">倒计天数</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>重复</span>
+          <select id="inputRepeat">
+            <option value="yearly">每年</option>
+            <option value="monthly">每月</option>
+            <option value="once">仅一次</option>
+          </select>
+        </label>
+        <label class="switch-row">
+          <input id="inputSendToContext" type="checkbox" />
+          <span>加入 AI 上下文提醒</span>
+        </label>
+      </div>
+      <footer>
+        <button class="secondary" type="button" id="deleteAnniversary">删除</button>
+        <button class="primary" value="default">保存</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <script type="module" src="./all.js"></script>
+</body>
+</html>

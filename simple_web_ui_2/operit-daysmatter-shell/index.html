@@ -1,143 +1,249 @@
 <!doctype html>
+<!-- DaysMatter provenance: original author 奶油话梅糖 <nyanon@vip.qq.com> -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Operit Shell</title>
+  <meta name="author" content="奶油话梅糖" />
+  <meta name="copyright" content="Copyright (c) 2026 奶油话梅糖 <nyanon@vip.qq.com>" />
+  <meta name="x-origin-watermark" content="daysmatter:nyanon@vip.qq.com:2026" />
+  <title>DaysMatter · 纪念日</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
-<body>
+<body data-origin-author="奶油话梅糖" data-origin-contact="nyanon@vip.qq.com" data-origin-watermark="daysmatter-2026-nyanon">
+    <aside class="drawer" id="drawer">
+    <h2>DaysMatter</h2>
+    <a href="#calendar">日历</a>
+    <a href="#today">今日纪念</a>
+    <a href="./all.html">全部纪念</a>
+
+    <div class="theme-section">
+      <h3>即将到来</h3>
+      <div class="preset-row" id="upcomingPresets">
+        <button type="button" class="preset-btn active" data-value="visible">显示</button>
+        <button type="button" class="preset-btn" data-value="hidden">隐藏</button>
+      </div>
+    </div>
+
+    <div class="theme-section">
+      <h3>颜色模式</h3>
+      <div class="preset-row" id="colorSchemePresets">
+        <button type="button" class="preset-btn active" data-value="dark">暗色</button>
+        <button type="button" class="preset-btn" data-value="light">亮色</button>
+        <button type="button" class="preset-btn" data-value="auto">跟随系统</button>
+      </div>
+    </div>
+
+    <div class="theme-section base">
+      <h3>基础色</h3>
+      <div class="color-presets" id="baseColorPresets">
+        <button type="button" class="color-preset active" data-hue="217" data-sat="55" data-lit="14" style="background: hsl(217, 55%, 14%)" aria-label="深蓝"></button>
+        <button type="button" class="color-preset" data-hue="260" data-sat="50" data-lit="14" style="background: hsl(260, 50%, 14%)" aria-label="紫黑"></button>
+        <button type="button" class="color-preset" data-hue="190" data-sat="55" data-lit="13" style="background: hsl(190, 55%, 13%)" aria-label="青黑"></button>
+        <button type="button" class="color-preset" data-hue="340" data-sat="50" data-lit="14" style="background: hsl(340, 50%, 14%)" aria-label="红黑"></button>
+        <button type="button" class="color-preset" data-hue="150" data-sat="45" data-lit="13" style="background: hsl(150, 45%, 13%)" aria-label="绿黑"></button>
+      </div>
+      <div class="color-custom">
+        <input type="color" id="baseCustomColor" value="#101f37" />
+        <label for="baseCustomColor">自定义</label>
+      </div>
+    </div>
+
+    <div class="theme-section">
+      <h3>强调色</h3>
+      <div class="color-presets" id="accentColorPresets">
+        <button type="button" class="color-preset active" data-hue="217" data-sat="90" data-lit="60" style="background: hsl(217, 90%, 60%)" aria-label="亮蓝"></button>
+        <button type="button" class="color-preset" data-hue="260" data-sat="85" data-lit="65" style="background: hsl(260, 85%, 65%)" aria-label="紫罗兰"></button>
+        <button type="button" class="color-preset" data-hue="190" data-sat="90" data-lit="55" style="background: hsl(190, 90%, 55%)" aria-label="青色"></button>
+        <button type="button" class="color-preset" data-hue="340" data-sat="85" data-lit="65" style="background: hsl(340, 85%, 65%)" aria-label="玫瑰"></button>
+        <button type="button" class="color-preset" data-hue="150" data-sat="75" data-lit="55" style="background: hsl(150, 75%, 55%)" aria-label="薄荷"></button>
+      </div>
+      <div class="color-custom">
+        <input type="color" id="accentCustomColor" value="#3b82f6" />
+        <label for="accentCustomColor">自定义</label>
+      </div>
+    </div>
+
+    <div class="theme-section">
+      <h3>字体</h3>
+      <div class="preset-row" id="fontPresets">
+        <button type="button" class="preset-btn active" data-value="serif">衬线</button>
+        <button type="button" class="preset-btn" data-value="sans">无衬线</button>
+        <button type="button" class="preset-btn" data-value="mono">等宽</button>
+      </div>
+    </div>
+
+    <div class="theme-section">
+      <h3>布局密度</h3>
+      <div class="preset-row" id="densityPresets">
+        <button type="button" class="preset-btn" data-value="compact">紧凑</button>
+        <button type="button" class="preset-btn active" data-value="default">默认</button>
+        <button type="button" class="preset-btn" data-value="comfortable">舒适</button>
+      </div>
+    </div>
+
+    <div class="theme-section">
+      <h3>动画速度</h3>
+      <div class="preset-row" id="animationPresets">
+        <button type="button" class="preset-btn" data-value="none">关闭</button>
+        <button type="button" class="preset-btn active" data-value="default">默认</button>
+        <button type="button" class="preset-btn" data-value="fast">快速</button>
+      </div>
+    </div>
+
+    <div class="theme-section">
+      <h3>玻璃强度</h3>
+      <div class="preset-row" id="glassPresets">
+        <button type="button" class="preset-btn" data-value="weak">轻透</button>
+        <button type="button" class="preset-btn active" data-value="default">默认</button>
+        <button type="button" class="preset-btn" data-value="strong">浓郁</button>
+      </div>
+    </div>
+
+    <div class="theme-section">
+      <h3>日历起始</h3>
+      <div class="preset-row" id="weekStartPresets">
+        <button type="button" class="preset-btn active" data-value="sunday">周日</button>
+        <button type="button" class="preset-btn" data-value="monday">周一</button>
+      </div>
+    </div>
+
+    <div class="theme-section">
+      <h3>圆角大小</h3>
+      <div class="preset-row" id="radiusPresets">
+        <button type="button" class="preset-btn" data-value="small">小</button>
+        <button type="button" class="preset-btn active" data-value="default">默认</button>
+        <button type="button" class="preset-btn" data-value="large">大</button>
+      </div>
+    </div>
+
+    <div class="data-actions">
+      <button class="soft-btn" id="exportDataBtn" type="button">导出备份</button>
+      <button class="soft-btn" id="importDataBtn" type="button">导入恢复</button>
+      <input type="file" id="importFileInput" accept=".json" style="display:none" />
+    </div>
+  </aside>
+  <div class="drawer-mask" id="drawerMask"></div>
+
   <main class="phone-shell" id="app">
+    <header class="topbar">
+      <button class="menu" id="menuBtn" aria-label="打开菜单"></button>
+      <div class="brand">DaysMatter</div>
+    </header>
+
     <section class="hero">
-      <div class="statusbar">
-        <span>9:41</span>
-        <span>Operit</span>
-        <span>100%</span>
+      <h1>DaysMatter</h1>
+      <p>把重要的日子，放在时间看得见的地方</p>
+      <div class="legend">
+        <span><i class="dot blue"></i>纪念日</span>
+        <span><i class="dot red"></i>临近 7 天</span>
       </div>
-      <div class="hero-main">
-        <div class="calendar-logo" aria-label="Operit Logo">
-          <span class="calendar-title">OP</span>
-          <strong id="enabledCount">08</strong>
-        </div>
-        <div class="hero-copy">
-          <p class="eyebrow">Operit AI</p>
-          <h1>插件工作台</h1>
-          <p>管理 Skill、MCP、自动化任务与权限</p>
-        </div>
-        <button class="icon-button" id="openSearch" aria-label="搜索插件">⌕</button>
-      </div>
-      <div class="hero-metrics">
-        <article>
-          <b id="totalPlugins">12</b>
-          <span>插件</span>
-        </article>
-        <article>
-          <b id="runningJobs">2</b>
-          <span>运行中</span>
-        </article>
-        <article>
-          <b id="todayRuns">46</b>
-          <span>今日调用</span>
-        </article>
-      </div>
+      <div class="hint">点开日期，查看那一天留下的记录</div>
     </section>
 
-    <section class="content">
-      <div class="page active" data-page="home">
-        <div class="section-heading">
-          <div>
-            <p>今天</p>
-            <h2>插件状态</h2>
-          </div>
-          <button class="text-button" id="openCreate">新建任务</button>
-        </div>
-        <div class="event-list" id="homeList"></div>
-      </div>
-
-      <div class="page" data-page="plugins">
-        <div class="section-heading">
-          <div>
-            <p>插件中心</p>
-            <h2>启用与配置</h2>
-          </div>
-          <button class="text-button" id="syncPlugins">同步</button>
-        </div>
-        <label class="search-box">
-          <span>⌕</span>
-          <input id="pluginSearch" type="search" placeholder="搜索 Skill / MCP / 工具包" />
-        </label>
-        <div class="plugin-grid" id="pluginGrid"></div>
-      </div>
-
-      <div class="page" data-page="jobs">
-        <div class="section-heading">
-          <div>
-            <p>自动化</p>
-            <h2>定时任务</h2>
-          </div>
-          <button class="text-button" id="runAllJobs">运行全部</button>
-        </div>
-        <div class="job-board" id="jobBoard"></div>
-      </div>
-
-      <div class="page" data-page="logs">
-        <div class="section-heading">
-          <div>
-            <p>审计</p>
-            <h2>运行日志</h2>
-          </div>
-          <button class="text-button" id="clearLogs">清空</button>
-        </div>
-        <div class="log-panel" id="logPanel"></div>
-      </div>
+    <section class="glass-card liquid-glass section-card" id="upcoming">
+      <h2 class="section-title"><i class="dot red"></i>即将到来</h2>
+      <p class="section-desc">接下来一周，需要提前看见的日子。</p>
+      <div class="upcoming-list" id="upcomingList"></div>
     </section>
 
-    <nav class="tabbar" aria-label="主导航">
-      <button class="active" data-tab="home"><span>⌂</span>首页</button>
-      <button data-tab="plugins"><span>◇</span>插件</button>
-      <button data-tab="jobs"><span>◷</span>任务</button>
-      <button data-tab="logs"><span>≡</span>日志</button>
-    </nav>
+    <section class="glass-card liquid-glass calendar-card" id="calendar">
+      <h2 class="month-title" id="monthTitle">July, 2026</h2>
+
+      <div class="cal-actions">
+        <button class="soft-btn" id="prevMonth">◀ 上月</button>
+        <button class="soft-btn" id="todayBtn">回到今天</button>
+        <button class="soft-btn" id="nextMonth">下月 ▶</button>
+      </div>
+
+      <div class="week">
+        <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+      </div>
+      <div class="days" id="days"></div>
+      <p class="empty-tip" id="emptyTip">选中日期后显示当天记录。</p>
+    </section>
+
+    <div class="content-stack">
+      <section class="glass-card liquid-glass section-card" id="today">
+        <h2 class="section-title"><i class="dot blue"></i>今日纪念</h2>
+        <p class="section-desc">今天是否有需要被提醒的时刻。</p>
+        <div class="anniversary-list" id="todayList"></div>
+        <button class="soft-btn" id="addAnniversary">＋ 新建纪念</button>
+      </section>
+
+      <section class="glass-card liquid-glass section-card all-entry">
+        <h2 class="section-title"><i class="dot red"></i>全部纪念</h2>
+        <p class="section-desc">管理所有记录，回看被保存下来的时间。</p>
+        <a class="soft-btn all-entry-btn" href="./all.html">
+          <span>查看全部</span>
+          <span class="all-entry-arrow" aria-hidden="true">→</span>
+        </a>
+      </section>
+    </div>
+    <footer class="author-watermark">
+      Copyright © 2026 奶油话梅糖 · nyanon@vip.qq.com
+    </footer>
   </main>
 
-  <dialog class="sheet" id="pluginSheet">
+  <dialog class="sheet" id="anniversarySheet">
     <form method="dialog" class="sheet-card">
       <div class="sheet-handle"></div>
       <header>
         <div>
-          <p id="sheetType">Skill</p>
-          <h3 id="sheetTitle">插件配置</h3>
+          <p id="sheetType">新建纪念</p>
+          <h3 id="sheetTitle">记录一个日子</h3>
         </div>
         <button class="icon-button close" value="cancel" aria-label="关闭">×</button>
       </header>
       <div class="sheet-body">
         <label class="field">
-          <span>入口 / Endpoint</span>
-          <input id="endpointInput" value="local://operit/plugin" />
+          <span>名称</span>
+          <input id="inputTitle" type="text" placeholder="例如：第一次见面" required />
         </label>
         <label class="field">
-          <span>运行模式</span>
-          <select id="modeInput">
-            <option>按需调用</option>
-            <option>常驻后台</option>
-            <option>定时触发</option>
+          <span>日期</span>
+          <input id="inputDate" type="date" required />
+        </label>
+        <label class="field">
+          <span>备注</span>
+          <textarea id="inputDescription" rows="3" placeholder="写下这一天值得记住的原因"></textarea>
+        </label>
+        <label class="field">
+          <span>归属</span>
+          <select id="inputOwner">
+            <option value="user">用户</option>
+            <option value="assistant">AI</option>
+            <option value="shared">共同</option>
           </select>
         </label>
-        <div class="permission-box">
-          <p>权限</p>
-          <label><input type="checkbox" checked /> 文件访问</label>
-          <label><input type="checkbox" /> 网络请求</label>
-          <label><input type="checkbox" /> 系统自动化</label>
-          <label><input type="checkbox" /> 终端执行</label>
-        </div>
+        <label class="field">
+          <span>计数模式</span>
+          <select id="inputMode">
+            <option value="both">双向</option>
+            <option value="count_up">已过天数</option>
+            <option value="count_down">倒计天数</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>重复</span>
+          <select id="inputRepeat">
+            <option value="yearly">每年</option>
+            <option value="monthly">每月</option>
+            <option value="once">仅一次</option>
+          </select>
+        </label>
+        <label class="switch-row">
+          <input id="inputSendToContext" type="checkbox" />
+          <span>加入 AI 上下文提醒</span>
+        </label>
       </div>
       <footer>
-        <button class="secondary" type="button" id="testPlugin">测试连接</button>
-        <button class="primary" value="default">保存配置</button>
+        <button class="secondary" type="button" id="deleteAnniversary">删除</button>
+        <button class="primary" value="default">保存</button>
       </footer>
     </form>
   </dialog>
 
-  <script src="./app.js"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
