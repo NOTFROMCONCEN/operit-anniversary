@@ -8,7 +8,9 @@
 
 两个版本共享同一份数据文件，逻辑完全一致。
 
-依据任务书 [`example.md`](example.md:1) 实现，API 经 Operit 官方仓库示例校准。
+依据任务书 [`docs/example.md`](docs/example.md:1) 实现，API 经 Operit 官方仓库示例校准。
+
+项目文档已收拢到 [`docs/`](docs/README.md:1)：包含部署教程、任务书与开发计划。
 
 ---
 
@@ -37,7 +39,7 @@
 
 ## 三、数据模型
 
-每条纪念日结构（详见 [`example.md` 第 99-124 行`](example.md:99)）：
+每条纪念日结构（详见 [`docs/example.md` 第 99-124 行`](docs/example.md:99)）：
 
 | 字段                 | 类型                               | 说明                                           |
 | -------------------- | ---------------------------------- | ---------------------------------------------- |
@@ -119,7 +121,7 @@
 | title | string | 否   | 纪念日名称（与 id 二选一）                            |
 | today | string | 否   | 测试用当前日期 `YYYY-MM-DD`，未传则用北京时间当前日期 |
 
-**计算规则**（见 [`example.md` 第 233-256 行`](example.md:233)）
+**计算规则**（见 [`docs/example.md` 第 233-256 行`](docs/example.md:233)）
 
 | 场景             | daysSince | nextDate   | daysUntilNext | isToday |
 | ---------------- | --------- | ---------- | ------------- | ------- |
@@ -198,7 +200,7 @@
 
 ## 五、错误返回格式
 
-所有工具统一格式（遵循任务书 [`example.md` 第 405-432 行`](example.md:405)）：
+所有工具统一格式（遵循任务书 [`docs/example.md` 第 405-432 行`](docs/example.md:405)）：
 
 ```json
 { "success": false, "error": { "code": "INVALID_DATE", "message": "日期格式无效，请使用 YYYY-MM-DD" } }
