@@ -5,7 +5,7 @@ import {
   hasAnniversaryOnDate,
   pad2
 } from "../../shared/date-utils.js";
-import { buildAnniversaryCard, showToast, copyAnniversaryInfo } from "../../shared/ui-utils.js";
+import { buildAnniversaryCard, showToast, copyAnniversaryInfo, escapeHtml } from "../../shared/ui-utils.js";
 import { initTheme } from "./theme.js";
 import { initSheet, openSheet } from "./sheet.js";
 
@@ -157,7 +157,7 @@ function renderToday() {
       try {
         const result = await anniversaryInvoke("toggle_pin", { id: item.id });
         if (!result.success) {
-        showToast(result.error?.message || "置顶失败", { type: "error" });
+          showToast(result.error?.message || "置顶失败", { type: "error" });
           return;
         }
         snapshot = result.snapshot;
@@ -234,7 +234,7 @@ function renderUpcoming() {
     const urgent = status.daysUntilNext <= 1;
     el.innerHTML = `
       <span class="upcoming-dot ${urgent ? "urgent" : ""}"></span>
-      <span class="upcoming-title">${item.title}</span>
+      <span class="upcoming-title">${escapeHtml(item.title)}</span>
       <span class="upcoming-meta">${status.isToday ? "今天" : `${status.daysUntilNext} 天后`} · ${status.nextDate}</span>
     `;
     el.addEventListener("click", () => {

@@ -20,3 +20,6 @@ desktop.ini
 # 测试输出（如有临时文件）
 *.tmp
 *.out
+
+# 本地运行时
+.web-ui-server.pid
